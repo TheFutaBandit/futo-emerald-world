@@ -1,8 +1,8 @@
-import { SignUpSchema, LogInSchema } from "../types/authTypes";
+import { SignUpSchema, LogInSchema } from "../types/authTypes.js";
 import { Request, Response } from "express";
 import { hash, compare } from "bcrypt";
 import { prisma } from "@repo/db"
-import { JWT_PASSWORD } from "../config/authConfig";
+import { JWT_PASSWORD } from "../config/authConfig.js";
 import jwt from 'jsonwebtoken'
 
 
