@@ -1,0 +1,15 @@
+import { Navigate } from "react-router-dom";
+import useAuthContext from "../hook/useAuthContext";
+
+export function ProtectedRoute({children} : any) {
+    const { token } = useAuthContext();
+
+    if(!token) {
+        console.log("user not authenticated!");
+        return (
+            <Navigate to = "/signup"></Navigate>
+        )
+    }
+
+    return children;
+}
