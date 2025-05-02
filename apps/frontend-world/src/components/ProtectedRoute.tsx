@@ -7,7 +7,7 @@ export function ProtectedRoute({children} : any) {
     if(!token) {
         console.log("user not authenticated!");
         return (
-            <Navigate to = "/signup"></Navigate>
+            <Navigate to = "/auth"></Navigate>
         )
     }
 

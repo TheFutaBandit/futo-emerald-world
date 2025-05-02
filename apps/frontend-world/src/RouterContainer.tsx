@@ -1,11 +1,10 @@
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
-import { useMemo } from "react";
-import SignUpComponent from "./components/SignupComponent";
-import App from "./App";
-import useAuthContext from "./hook/useAuthContext";
+import SignupComponent from "./components/SignupComponent";
 import { PublicRoute } from "./components/PublicRoute";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import LogInCompnent from "./components/LoginComponent";
+import LoginComponent from "./components/LoginComponent";
+import { PublicDisplay } from "./components/PublicDisplay";
+import { Gameboy } from "./components/Gameboy";
 
 
 
@@ -13,19 +12,19 @@ export default function RouterContainer() {
     const router = createBrowserRouter([
         {
             path: "/",
-            element: <ProtectedRoute><App /></ProtectedRoute>
+            element: <ProtectedRoute><Gameboy /></ProtectedRoute>
         },
         {
-            path: "/signup",
-            element: <PublicRoute><SignUpComponent /></PublicRoute>
+            path: "/auth",
+            element: <PublicRoute><PublicDisplay /></PublicRoute>,
+            children: [
+                {index: true, element: <SignupComponent />},
+                {path: "/auth/login", element: <LoginComponent />},
+            ]
         },
-        {
-            path: "/login",
-            element: <PublicRoute><LogInCompnent /></PublicRoute>
-        }
     ])
 
     return (
         <RouterProvider router = {router} />
-    );
+    )
 }
