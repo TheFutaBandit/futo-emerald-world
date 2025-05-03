@@ -17,6 +17,7 @@ export class ModularScene extends Scene {
     playerMap: Map<string, Phaser.Physics.Arcade.Sprite>
     playerList: Map<string, {id: string, x: number, y: number}>;
     playerVelocity: Map<string, {vx: number, vy: number}>;
+    playerInitialized: boolean;
 
     constructor() {
         super('Modular-Scene');
@@ -27,6 +28,7 @@ export class ModularScene extends Scene {
         this.playerMap = new Map();
         this.playerList = new Map();
         this.playerVelocity = new Map();
+        this.playerInitialized = false;
     }
 
     preload() {
@@ -36,59 +38,6 @@ export class ModularScene extends Scene {
     }
 
     async create() {
-        //websocket connection
-         this.socket = new WebSocket("ws://localhost:3000");
-
-         this.socket.onopen = () => {
-             console.log("Socket has been established.")
-         }
- 
-         this.socket.onmessage = (message) => {
-            const msg = JSON.parse(message.data);
-            // console.log(msg);
-            switch(msg.type) {
-                case 'init': 
-                    this.userId = msg.payload.player.id;
-                    msg.payload.players.map((obj : {id: string, x: number, y: number}) => {
-                        if(this.userId != obj.id) {
-                            this.playerList.set(obj.id, obj);
-                            this.playerVelocity.set(obj.id, {vx: 0, vy: 0});
-                            this.playerMap.set(obj.id, this.physics.add.sprite(obj.x,obj.y, "atlas", "misa-front"));
-                        }
-                    })
-                    console.log(this.playerMap);
-                    break;
-                case 'player-joined': 
-                    const new_player = this.physics.add.sprite(msg.payload.x,msg.payload.y, "atlas", "misa-front")
-                    this.playerList.set(msg.payload.id, msg.payload);
-                    this.playerMap.set(msg.payload.id, new_player);
-
-                    // this.physics.add.collider(world_layer!, new_player)
-                    this.physics.add.collider(this.player, new_player);
-                    // new_player.setCollideWorldBounds(true);
-
-                    this.playerMap.forEach((sprite, clientId) => {
-                        if(clientId != msg.payload.id && sprite != new_player) {
-                            this.physics.add.collider(sprite, new_player);
-                        }
-                    })
-                    break;
-                case 'player-movement':
-                    // console.log(msg.payload);
-                    this.playerList.get(msg.payload.id)!.x = msg.payload.x;
-                    this.playerList.get(msg.payload.id)!.y = msg.payload.y;
-                    this.playerVelocity.get(msg.payload.id)!.vx = msg.payload.velocity.x;
-                    this.playerVelocity.get(msg.payload.id)!.vy = msg.payload.velocity.y;
-                    break;
-                case 'player-left':
-                    this.playerList.delete(msg.payload.id);
-                    this.playerVelocity.delete(msg.payload.id);
-                    const getSprite = this.playerMap.get(msg.payload.id);
-                    this.playerMap.delete(msg.payload.id);
-                    getSprite?.destroy();
-            }
-         }
-        
         const map = this.make.tilemap({key: "map"});
 
         const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles")
@@ -101,22 +50,7 @@ export class ModularScene extends Scene {
 
         world_layer?.setCollisionByProperty({collides: true});
 
-        
-
-        // const debugGraphics = this.add.graphics().setAlpha(0.75);
-
-        // world_layer?.renderDebug(debugGraphics, {
-        //     tileColor: null,
-        //     collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-        //     faceColor: new Phaser.Display.Color(40, 39, 37, 255)
-        // })
-
-       
-        const obj_layer = map.getObjectLayer('Objects');
-        const obj = obj_layer?.objects.find(ob => ob.name === 'Spawn Point');
-
-        // console.log(obj?.x);
-
+        //camera setup
         const camera = this.cameras.main;
 
         this.cursors = this.input.keyboard?.createCursorKeys();
@@ -132,14 +66,7 @@ export class ModularScene extends Scene {
 
         camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
 
-        this.player = this.physics.add.sprite(obj?.x!,obj?.y!, "atlas", "misa-front");
-
-        this.physics.add.collider(this.player, world_layer!);
-
-        // this.player.setCollideWorldBounds(true);
-
-        camera.startFollow(this.player);
-
+        //animation
         const anims = this.anims;
         anims.create({
           key: "misa-left-walk",
@@ -165,6 +92,103 @@ export class ModularScene extends Scene {
           frameRate: 10,
           repeat: -1
         });      
+
+        //websocket connection
+         this.socket = new WebSocket("ws://localhost:3452");
+
+         this.socket.onopen = () => {
+             console.log("Socket has been established.")
+         }
+ 
+         this.socket.onmessage = (message) => {
+            const msg = JSON.parse(message.data);
+            // console.log(msg);
+            switch(msg.type) {
+                case 'init': 
+                    this.userId = msg.payload.player.id;
+                    console.log('the user id is ' + this.userId);
+
+                    if(!this.playerInitialized) {
+                        const serverX = msg.payload.player.x;
+                        const serverY = msg.payload.player.y;
+
+                        this.player = this.physics.add.sprite(serverX,serverY, "atlas", "misa-front");
+
+                        this.physics.add.collider(this.player, world_layer!);
+                
+                        // this.player.setCollideWorldBounds(true);
+                
+                        camera.startFollow(this.player);
+                        this.playerInitialized = true;
+
+
+                    }
+                    msg.payload.players.map((obj : {id: string, x: number, y: number}) => {
+                        if(this.userId != obj.id) {
+                            this.playerList.set(obj.id, obj);
+                            this.playerVelocity.set(obj.id, {vx: 0, vy: 0});
+                            this.playerMap.set(obj.id, this.physics.add.sprite(obj.x,obj.y, "atlas", "misa-front"));
+                        }
+                    })
+                    console.log(this.playerMap);
+                    break;
+                case 'player-joined': 
+                    const new_player = this.physics.add.sprite(msg.payload.x,msg.payload.y, "atlas", "misa-front")
+                    this.playerList.set(msg.payload.id, msg.payload);
+                    this.playerMap.set(msg.payload.id, new_player);
+
+                    // this.physics.add.collider(world_layer!, new_player)
+                    // this.physics.add.collider(this.player, new_player);
+                    // new_player.setCollideWorldBounds(true);
+
+                    this.playerMap.forEach((sprite, clientId) => {
+                        if(clientId != msg.payload.id && sprite != new_player) {
+                            this.physics.add.collider(sprite, new_player);
+                        }
+                    })
+                    break;
+                case 'player-movement':
+                    // console.log(msg.payload);
+                    this.playerList.get(msg.payload.id)!.x = msg.payload.x;
+                    this.playerList.get(msg.payload.id)!.y = msg.payload.y;
+                    this.playerVelocity.get(msg.payload.id)!.vx = msg.payload.velocity.x;
+                    this.playerVelocity.get(msg.payload.id)!.vy = msg.payload.velocity.y;
+                    break;
+                case 'player-left':
+                    this.playerList.delete(msg.payload.id);
+                    this.playerVelocity.delete(msg.payload.id);
+                    const getSprite = this.playerMap.get(msg.payload.id);
+                    this.playerMap.delete(msg.payload.id);
+                    getSprite?.destroy();
+            }
+         }
+        
+        
+
+        
+
+        
+
+        // const debugGraphics = this.add.graphics().setAlpha(0.75);
+
+        // world_layer?.renderDebug(debugGraphics, {
+        //     tileColor: null,
+        //     collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+        //     faceColor: new Phaser.Display.Color(40, 39, 37, 255)
+        // })
+
+       
+        const obj_layer = map.getObjectLayer('Objects');
+        const obj = obj_layer?.objects.find(ob => ob.name === 'Spawn Point');
+
+        const spawn_obj_layer = map.getObjectLayer('PlayerSpawns');
+        const spawn_points = spawn_obj_layer?.objects.map((object) => {return {
+            x: object.x,
+            y: object.y
+        }});
+
+        console.log(this.userId);
+        console.log(this.playerList.get(this.userId));
     }
 
     setMove(x: number, y: number, velocityX: number, velocityY: number) {
@@ -186,12 +210,12 @@ export class ModularScene extends Scene {
         this.prevPosition.x = x;
         this.prevPosition.y = y;
     }
-
-   
-    
+  
 
     update(time : any, delta : any) {
         this.controls.update(delta);
+
+        if(!this.playerInitialized || !this.player) return;
 
         const speed = 175;
         const prevVelocity = this.player.body?.velocity.clone();
@@ -238,6 +262,11 @@ export class ModularScene extends Scene {
 
                 const playerEntity = this.playerList.get(clientId);
 
+                if(!playerEntity) return;
+
+                const prevX = sprite.x;
+                const prevY = sprite.y;
+
                 const playerVelocityObj = this.playerVelocity.get(clientId);
 
                 const target_x = playerEntity?.x!;
@@ -249,43 +278,66 @@ export class ModularScene extends Scene {
                 const dist_x = (target_x - current_x);
                 const dist_y = (target_y - current_y);
 
-                const lerpFactor = 1;
+                const lerpFactor = 0.2;
 
-                const new_x = current_x + dist_x*lerpFactor;
-                const new_y = current_y + dist_y*lerpFactor;
+                const new_x = Phaser.Math.Linear(prevX, target_x, lerpFactor);
+                const new_y = Phaser.Math.Linear(prevY, target_y, lerpFactor);
 
-                const moveX = new_x - current_x;
-                const moveY = new_y - current_y;
+                const deltaX = new_x - prevX;
+                const deltaY = new_y - prevY;
 
-                sprite.setVelocity(moveX*10, moveY*10);
+                // sprite.setVelocity(moveX*10, moveY*10);
 
-                if(Math.abs(moveX) > Math.abs(moveY)) {
-                    if(moveX > 0) {
-                        sprite.anims.play('misa-right-walk', true);
+                sprite.setPosition(new_x, new_y);
+
+                const moving = Math.abs(deltaX) > 0.5 || Math.abs(deltaY) > 0.5;
+
+                if(moving) {
+                    if(Math.abs(deltaX) > Math.abs(deltaY)) {
+                        if(deltaX > 0) sprite.anims.play('misa-right-walk', true);
+                        else sprite.anims.play('misa-left-walk', true);
                     } else {
-                        sprite.anims.play('misa-left-walk', true);
+                        if(deltaY > 0) sprite.anims.play('misa-front-walk', true);
+                        else sprite.anims.play('misa-back-walk', true);
                     }
                 } else {
-                    if(moveY > 0) {
-                        sprite.anims.play('misa-front-walk', true);
-                    } else {
-                        sprite.anims.play('misa-back-walk', true);
+                    sprite.anims.stop();
+                    const vel = this.playerVelocity.get(clientId);
+                    if(vel) {
+                        if (vel!.vx < 0) sprite.setTexture("atlas", "misa-left");
+                        else if (vel!.vx > 0) sprite.setTexture("atlas", "misa-right");
+                        else if (vel!.vy < 0) sprite.setTexture("atlas", "misa-back");
+                        else if (vel!.vy > 0) sprite.setTexture("atlas", "misa-front");
                     }
                 }
 
-                if (Math.abs(moveX) <0.1 && Math.abs(moveY) <0.1 ) {
-                    sprite.anims.stop();
-                    // Use the last direction to determine idle frame
-                    if(playerVelocityObj) {
-                        if(playerVelocityObj.vx  && playerVelocityObj.vy) {
-                            if (playerVelocityObj!.vx < 0) sprite.setTexture("atlas", "misa-left");
-                            else if (playerVelocityObj!.vx > 0) sprite.setTexture("atlas", "misa-right");
-                            else if (playerVelocityObj!.vy < 0) sprite.setTexture("atlas", "misa-back");
-                            else if (playerVelocityObj!.vy > 0) sprite.setTexture("atlas", "misa-front");
-                            }
-                        }
+                // if(Math.abs(moveX) > Math.abs(moveY)) {
+                //     if(moveX > 0) {
+                //         sprite.anims.play('misa-right-walk', true);
+                //     } else {
+                //         sprite.anims.play('misa-left-walk', true);
+                //     }
+                // } else {
+                //     if(moveY > 0) {
+                //         sprite.anims.play('misa-front-walk', true);
+                //     } else {
+                //         sprite.anims.play('misa-back-walk', true);
+                //     }
+                // }
+
+                // if (Math.abs(moveX) <0.1 && Math.abs(moveY) <0.1 ) {
+                //     sprite.anims.stop();
+                //     // Use the last direction to determine idle frame
+                //     if(playerVelocityObj) {
+                //         if(playerVelocityObj.vx  && playerVelocityObj.vy) {
+                //             if (playerVelocityObj!.vx < 0) sprite.setTexture("atlas", "misa-left");
+                //             else if (playerVelocityObj!.vx > 0) sprite.setTexture("atlas", "misa-right");
+                //             else if (playerVelocityObj!.vy < 0) sprite.setTexture("atlas", "misa-back");
+                //             else if (playerVelocityObj!.vy > 0) sprite.setTexture("atlas", "misa-front");
+                //             }
+                //         }
                         
-                }
+                // }
                 
 
                 // if(playerVeclocityObj?.vx! > 0) {
