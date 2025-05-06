@@ -1,5 +1,5 @@
 import App from "../App";
-
+import SolanaContainer from "./SolanaContainer/SolanaContainer.js";
 
 export function Gameboy() {
     return (
@@ -9,7 +9,7 @@ export function Gameboy() {
                 <div>I will be the game container</div>
                 <App />
             </div>
-            <div className = "container2">I will be the solana container</div>
+            <div className = "container2"><SolanaContainer /></div>
         </div>
     )
 }

@@ -6,6 +6,24 @@ interface prevPosition {
     y: number
 }
 
+interface PokemonSprite extends Phaser.Types.Physics.Arcade.SpriteWithDynamicBody {
+    pokemonData: {
+        type: string;
+        bounty: number;
+        multiplier: number;
+        difficulty: number;
+    };
+}
+
+interface PokemonImage extends Phaser.Types.Physics.Arcade.ImageWithDynamicBody {
+    pokemonData: {
+        type: string;
+        bounty: number;
+        multiplier: number;
+        difficulty: number;
+    };
+}
+
 export class ModularScene extends Scene {
     controls: Phaser.Cameras.Controls.FixedKeyControl
     player: Phaser.Physics.Arcade.Sprite;
@@ -18,6 +36,10 @@ export class ModularScene extends Scene {
     playerList: Map<string, {id: string, x: number, y: number}>;
     playerVelocity: Map<string, {vx: number, vy: number}>;
     playerInitialized: boolean;
+    interactText: Phaser.GameObjects.Text;
+    canInteract: boolean;
+    nearbyPokemon: null | PokemonImage;
+    pokemon: PokemonImage;
 
     constructor() {
         super('Modular-Scene');
@@ -35,6 +57,7 @@ export class ModularScene extends Scene {
         this.load.image("tiles", "../assets/tilesets/tuxmon-sample-32px-extruded.png");
         this.load.tilemapTiledJSON("map", '../assets/tilemaps/tuxemon-town.json');
         this.load.atlas("atlas", "../assets/atlas/atlas.png", "../assets/atlas/atlas.json");
+        this.load.image("pokemon", "../assets/images/solgaleo.png");
     }
 
     async create() {
@@ -163,12 +186,6 @@ export class ModularScene extends Scene {
             }
          }
         
-        
-
-        
-
-        
-
         // const debugGraphics = this.add.graphics().setAlpha(0.75);
 
         // world_layer?.renderDebug(debugGraphics, {
@@ -187,8 +204,32 @@ export class ModularScene extends Scene {
             y: object.y
         }});
 
-        console.log(this.userId);
-        console.log(this.playerList.get(this.userId));
+        // this.interactText = this.add.text(0,0,"Press E to interact", {
+        //     fontSize: '20px',
+        //     color: '#fff',
+        //     backgroundColor: '#000',
+        //     padding: {x: 5, y: 2}
+        // })
+        // this.interactText.setVisible(true);
+
+
+        //pokemon logic
+        this.spawnPokemon();
+
+        //
+
+
+        //text box for interaction
+        this.interactText = this.add.text(10, 10, 'Press E to interact', {
+            padding: { x: 10, y: 10 },
+        })
+        .setScale(1)
+        .setOrigin(0)
+        .setStyle({fontStyle: 'bold', backgroundColor: "#000", fontFamily: 'Arial', color: '#fff'});
+        this.interactText.setVisible(false);
+
+        this.canInteract = false;
+        this.nearbyPokemon = null;
     }
 
     setMove(x: number, y: number, velocityX: number, velocityY: number) {
@@ -209,6 +250,44 @@ export class ModularScene extends Scene {
         }))
         this.prevPosition.x = x;
         this.prevPosition.y = y;
+    }
+
+    spawnPokemon() {
+        const pokemonType = {
+            type: 'Pikachu',
+            spriteIndex: 0,
+            bounty: 50,
+            multiplier: 1.5,
+            difficulty: 7
+        }
+
+        this.pokemon = this.physics.add.image(590, 912, 'pokemon').setScale(1.2) as PokemonImage;
+
+        this.pokemon.pokemonData = {
+            type: pokemonType.type,
+            bounty: pokemonType.bounty,
+            multiplier: pokemonType.multiplier,
+            difficulty: pokemonType.difficulty
+        }
+    }
+
+    checkPokemonProximity() {
+        this.canInteract = false;
+        this.nearbyPokemon = null;
+        this.interactText.setVisible(false);
+
+        const PLAYERX = Math.floor(this.player.x/32);
+        const PLAYERY = Math.floor(this.player.y/32);
+
+        const pokemonX = Math.floor(this.pokemon.x/32);
+        const pokemonY = Math.floor(this.pokemon.y/32);
+
+        if(Math.abs(PLAYERX - pokemonX) < 2 && Math.abs(PLAYERY - pokemonY) < 2) {
+            this.canInteract = true;
+            this.nearbyPokemon = this.pokemon;
+            this.interactText.setVisible(true);
+            this.interactText.setPosition(this.player.x, this.player.y - 50);
+        }
     }
   
 
@@ -361,6 +440,8 @@ export class ModularScene extends Scene {
 
         
         // If we were moving, pick and idle frame to use
+
+        this.checkPokemonProximity();
         
     }
 
