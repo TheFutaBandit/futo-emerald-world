@@ -3,6 +3,7 @@ import { ModularScene } from './scenes/ModularScene';
 
 
 import { useEffect } from 'react';
+import { EncounterScene } from './scenes/EncounterScene';
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -20,7 +21,8 @@ const config: Phaser.Types.Core.GameConfig = {
         }
     },
     scene: [
-        ModularScene
+        ModularScene,
+        EncounterScene
     ]
 };
 

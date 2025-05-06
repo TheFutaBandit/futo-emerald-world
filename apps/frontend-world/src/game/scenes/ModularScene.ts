@@ -40,6 +40,7 @@ export class ModularScene extends Scene {
     canInteract: boolean;
     nearbyPokemon: null | PokemonImage;
     pokemon: PokemonImage;
+    interactKey: Phaser.Input.Keyboard.Key;
 
     constructor() {
         super('Modular-Scene');
@@ -216,7 +217,10 @@ export class ModularScene extends Scene {
         //pokemon logic
         this.spawnPokemon();
 
-        //
+        //e to interact
+        if (this.input.keyboard) {
+            this.interactKey = this.input.keyboard.addKey('e');
+        }
 
 
         //text box for interaction
@@ -254,7 +258,7 @@ export class ModularScene extends Scene {
 
     spawnPokemon() {
         const pokemonType = {
-            type: 'Pikachu',
+            type: 'Solgaleo',
             spriteIndex: 0,
             bounty: 50,
             multiplier: 1.5,
@@ -288,7 +292,11 @@ export class ModularScene extends Scene {
             this.interactText.setVisible(true);
             this.interactText.setPosition(this.player.x, this.player.y - 50);
         }
+
+        EventBus.emit('current-scene-ready', this);
     }
+
+    
   
 
     update(time : any, delta : any) {
@@ -442,7 +450,20 @@ export class ModularScene extends Scene {
         // If we were moving, pick and idle frame to use
 
         this.checkPokemonProximity();
-        
+
+        if(this.canInteract && this.interactKey.isDown) {
+            this.startPokemonEncounter(this.nearbyPokemon!);
+            // if(this.nearbyPokemon) {
+            //     EventBus.emit('pokemon-interact', this.nearbyPokemon);
+            //     this.interactText.setVisible(false);
+            // }
+        }  
     }
 
+    startPokemonEncounter(pokemon: PokemonImage) {
+        this.scene.start('EncounterScene', {
+            pokemonData: pokemon.pokemonData,
+            pokemon: pokemon
+        })
+    }
 }
