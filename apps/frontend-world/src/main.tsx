@@ -4,6 +4,7 @@ import AuthContextProvider from './context/AuthContext.tsx';
 import RouterContainer from './RouterContainer.tsx';
 
 
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <AuthContextProvider>
