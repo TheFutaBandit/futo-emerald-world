@@ -54,6 +54,7 @@ export class EncounterScene extends Phaser.Scene{
     pokemonData: PokemonData;
     catchButton: Phaser.GameObjects.Text;
     pokeballCount: number;
+    encounterImage: Phaser.GameObjects.Image;
 
     constructor () {
         super('EncounterScene');
@@ -72,9 +73,9 @@ export class EncounterScene extends Phaser.Scene{
 
     create() {
         this.add.image(400,300, 'background').setOrigin(0.5, 0.5).setScale(1.125);
-        const encounterImage = this.add.image(400,300, 'pokemon-large').setOrigin(0.5, 0.5).setScale(0.5);
+        this.encounterImage = this.add.image(400,300, 'pokemon-large').setOrigin(0.5, 0.5).setScale(0.5);
 
-        this.add.text(encounterImage.x, encounterImage.y - 160, `${this.pokemonData.type}`).setStyle({fontSize: '24px', backgroundColor: "#000", fontFamily: 'Arial', color: '#fff'}).setOrigin(0.5).setPadding({x: 10, y: 5});
+        this.add.text(this.encounterImage.x, this.encounterImage.y - 160, `${this.pokemonData.type}`).setStyle({fontSize: '24px', backgroundColor: "#000", fontFamily: 'Arial', color: '#fff'}).setOrigin(0.5).setPadding({x: 10, y: 5});
         this.add.text(50, 80, `Bounty: ${this.pokemonData.bounty} PokeCoins`).setStyle({fontSize: '18px', backgroundColor: "#000", fontFamily: 'Arial', color: '#fff'});
         this.add.text(50, 110, `Multiplier: ${this.pokemonData.multiplier}x`).setStyle({fontSize: '18px', backgroundColor: "#000", fontFamily: 'Arial', color: '#fff'});
 
@@ -102,8 +103,7 @@ export class EncounterScene extends Phaser.Scene{
 
     async attemptCatch() {
         this.catchButton.disableInteractive();
-
-        
+  
         this.updateCatchButtonState();
 
         const pokeball = this.add.image(150, 350, 'pokeball').setScale(0.1);
@@ -138,7 +138,7 @@ export class EncounterScene extends Phaser.Scene{
             // const data = response.data;
 
             const data = {
-                success: false,
+                success: true,
                 catch: false
             }
             // Simulate a successful catch
@@ -147,14 +147,17 @@ export class EncounterScene extends Phaser.Scene{
                 if(data.catch) {
                     console.log('Pokemon caught successfully!');
                     this.tweens.add({
-                        targets: this.pokemon,
-                        alpha: 0,
-                        scale: 0.05,
-                        duration: 1000,
+                        targets: this.encounterImage,
+                        x: pokeball.x,
+                        y: pokeball.y,
+                        scale: 0.1,
+                        alpha: 0.7,
+                        duration: 800,
                         ease: 'Power2',
                         onComplete: () => {
                             // Show success message with rewards
                             const reward = this.pokemonData.bounty * this.pokemonData.multiplier;
+                            this.encounterImage.setVisible(false);
                             this.showResultMessage(true, reward);
                             console.log(`Pokemon caught! You received ${reward} PokeCoins.`);
                             // this.leaveMapEncounter(true);
@@ -172,27 +175,71 @@ export class EncounterScene extends Phaser.Scene{
                     });
                 } else {
                     console.log('Failed to catch Pokemon');
-                    this.showResultMessage(false, 0);
-                    this.catchButton.setInteractive();
+                    this.tweens.add({
+                        targets: pokeball,
+                        y: pokeball.y + 20,
+                        angle: { from: -15, to: 15 },
+                        scale: 0.12,
+                        duration: 500,
+                        ease: 'Bounce',
+                        onComplete: () => {
+                            // Fade out pokeball
+                            this.tweens.add({
+                                targets: pokeball,
+                                alpha: 0,
+                                duration: 300,
+                                onComplete: () => {
+                                    pokeball.destroy();
+                                    this.showResultMessage(false, 0);
+                                    
+                                    // Re-enable catch button if player still has pokeballs
+                                    if (this.pokeballCount > 0) {
+                                        this.catchButton.setInteractive({ useHandCursor: true });
+                                    }
+                                }
+                            });
+                        }
+                    });
                 }
             } else {
                 this.showResultMessage(false, 0, "transaction error");
+                this.catchButton.setInteractive({ useHandCursor: true });
                 console.log('Server Error');
             }
         } catch (error) {
             console.log("failed");
             console.error('Error during catch attempt:', error);
-            this.showResultMessage(false, 0, "Transaction error");
+            
         }
-       
     }
 
     updateCatchButtonState() {
         this.pokeballCount--;
         this.catchButton.setText(`Catch (${this.pokeballCount} Pokeballs left)`);
-        if (this.pokeballCount <= 0) {
-            this.catchButton.setStyle({ backgroundColor: "#880000" });
+
+        if(this.pokeballCount <= 0) {
+            this.catchButton.setStyle({ 
+                backgroundColor: "#666666",
+                color: "#aaaaaa"
+            });
             this.catchButton.disableInteractive();
+
+            const hintText = this.add.text(400, 380, "No more Pokeballs left. Press 'Leave' to exit.")
+            .setOrigin(0.5)
+            .setStyle({
+                fontSize: '14px',
+                backgroundColor: "#000000",
+                padding: { x: 8, y: 4 },
+                color: '#ffffff'
+            });
+
+            this.tweens.add({
+                targets: hintText,
+                alpha: { from: 1, to: 0.5 },
+                yoyo: true,
+                repeat: 3,
+                duration: 300
+            });
         }
     }
 
@@ -214,6 +261,21 @@ export class EncounterScene extends Phaser.Scene{
             .setStyle({fontSize: '24px', align: 'center'})
             .setOrigin(0.5)
             .setFill('#ffffff')
+
+            this.add.text(400, 300, 'Close')
+            .setStyle({fontSize: '20px', fontFamily: 'Arial', color: '#fff', padding: { x: 10, y: 5 }})
+            .setFill('#880000')
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true })
+            .on('pointerdown', () => {
+                panel.destroy();
+                messageText.destroy();
+                this.children.each((child) => {
+                    if (child instanceof Phaser.GameObjects.Text && child.text === 'Close') {
+                        child.destroy();
+                    }
+                })
+            })
         } else if (success) {
             messageText = this.add.text(400, 250, `You caught ${this.pokemonData.type}!\n\nReward: ${reward} PokeCoins`)
             .setStyle({fontSize: '24px', align: 'center'})
@@ -229,7 +291,7 @@ export class EncounterScene extends Phaser.Scene{
                 this.leaveMapEncounter(true);
             });
         } else {
-            messageText = this.add.text(400, 250, `${this.pokemonData.type} escaped!`)
+            messageText = this.add.text(400, 250, `Couldn't catch ${this.pokemonData.type}!`)
             .setStyle({fontSize: '24px', align: 'center'})
             .setOrigin(0.5)
             .setFill('#ffffff')
