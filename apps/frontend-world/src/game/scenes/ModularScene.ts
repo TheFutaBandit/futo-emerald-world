@@ -475,9 +475,13 @@ export class ModularScene extends Scene {
     }
 
     startPokemonEncounter(pokemon: PokemonImage) {
-        this.scene.start('EncounterScene', {
+        this.scene.sleep();
+
+        this.scene.launch('EncounterScene', {
             pokemonData: pokemon.pokemonData,
             pokemon: pokemon
         })
+
+
     }
 }
