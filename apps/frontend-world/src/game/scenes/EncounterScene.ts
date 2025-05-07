@@ -123,24 +123,24 @@ export class EncounterScene extends Phaser.Scene{
         this.catchButton.disableInteractive();
 
         try {
-            // const response = await axios.post(`${BACKEND_URL}/api/v1/solana/catch`, {
-            //     pokemonId: this.pokemonData.type,
-            //     pokemonDifficulty: this.pokemonData.difficulty,
-            //     pokemonBounty: this.pokemonData.bounty,
-            //     pokemonMultiplier: this.pokemonData.multiplier,
-            //     ball_rate: this.pokeballCount,
-            //     userWallet: '7YcM2pScrnZEjoDu2STaS83BtmDujJHZ86Ei9CUnUeCL' 
-            // });
+            const response = await axios.post(`${BACKEND_URL}/api/v1/solana/catch`, {
+                pokemonId: this.pokemonData.type,
+                pokemonDifficulty: this.pokemonData.difficulty,
+                pokemonBounty: this.pokemonData.bounty,
+                pokemonMultiplier: this.pokemonData.multiplier,
+                ball_rate: this.pokeballCount,
+                userWallet: '7YcM2pScrnZEjoDu2STaS83BtmDujJHZ86Ei9CUnUeCL' 
+            });
     
             
-            // console.log('Response:', response.data);
+            console.log('Response:', response.data);
     
-            // const data = response.data;
+            const data = response.data;
 
-            const data = {
-                success: true,
-                catch: false
-            }
+            // const data = {
+            //     success: true,
+            //     catch: true
+            // }
             // Simulate a successful catch
     
             if(data.success) {

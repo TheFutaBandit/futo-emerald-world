@@ -10,7 +10,7 @@ export default async function attemptCatchPokemon(req: Request, res: Response) :
         return res.status(400).json({ error: "Missing required fields" });
     }
     
-    const max_no = 6;
+    const max_no = 1;
 
     const no_1 = Math.floor(Math.random() * max_no);
     const no_2 = Math.floor(Math.random() * max_no);

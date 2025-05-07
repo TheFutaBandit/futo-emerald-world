@@ -3,7 +3,12 @@ import SolanaContainer from "./SolanaContainer/SolanaContainer.js";
 
 export function Gameboy() {
     return (
-        <div>
+        <div style ={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "20px",
+        }}>
             <div className = "container1">Hello There</div>
             <div className = "gameContainer">
                 <div>I will be the game container</div>
