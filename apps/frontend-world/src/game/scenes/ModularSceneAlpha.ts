@@ -1,6 +1,5 @@
 import { Scene, Time } from "phaser";
 import { EventBus } from "../EventBus";
-import { NetworkManager } from "../NetworkManager";
 
 interface prevPosition {
     x: number, 
@@ -42,11 +41,6 @@ export class ModularScene extends Scene {
     nearbyPokemon: null | PokemonImage;
     pokemon: PokemonImage;
     interactKey: Phaser.Input.Keyboard.Key;
-    networkManager: NetworkManager;
-    world_layer: Phaser.Tilemaps.TilemapLayer | null;
-    camera: Phaser.Cameras.Scene2D.Camera;
-    pokemonToRemove: any;
-
 
     constructor() {
         super('Modular-Scene');
@@ -58,14 +52,6 @@ export class ModularScene extends Scene {
         this.playerList = new Map();
         this.playerVelocity = new Map();
         this.playerInitialized = false;
-
-        this.networkManager = NetworkManager.getInstance();
-    }
-
-    init(data: any) {
-        if (data && data.pokemonCaught && data.pokemonId) {
-            this.pokemonToRemove = data.pokemonId;
-        }
     }
 
     preload() {
@@ -81,20 +67,20 @@ export class ModularScene extends Scene {
         const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles")
 
         const below_layer = map.createLayer("Below Player", tileset!, 0, 0);
-        this.world_layer = map.createLayer("World", tileset!, 0, 0);
+        const world_layer = map.createLayer("World", tileset!, 0, 0);
         const above_layer = map.createLayer("Above Player", tileset!,0, 0);
 
         above_layer?.setDepth(10);
 
-        this.world_layer?.setCollisionByProperty({collides: true});
+        world_layer?.setCollisionByProperty({collides: true});
 
         //camera setup
-        this.camera = this.cameras.main;
+        const camera = this.cameras.main;
 
         this.cursors = this.input.keyboard?.createCursorKeys();
 
         this.controls = new Phaser.Cameras.Controls.FixedKeyControl({
-            camera: this.camera,
+            camera: camera,
             down: this.cursors?.down,
             up: this.cursors?.up,
             left: this.cursors?.left,
@@ -102,7 +88,7 @@ export class ModularScene extends Scene {
             speed: 0.5,
         })
 
-        this.camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
+        camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
 
         //animation
         const anims = this.anims;
@@ -131,13 +117,75 @@ export class ModularScene extends Scene {
           repeat: -1
         });      
 
-        if(!this.networkManager.isConnected) {
-            this.networkManager.connect();
-        }
- 
-        this.initNetworkHandlers();
+        //websocket connection
+         this.socket = new WebSocket("ws://localhost:3452");
 
-        this.events.on('shutdownn', this.handleSceneShutdown, this);
+         this.socket.onopen = () => {
+             console.log("Socket has been established.")
+         }
+ 
+         this.socket.onmessage = (message) => {
+            const msg = JSON.parse(message.data);
+            // console.log(msg);
+            switch(msg.type) {
+                case 'init': 
+                    this.userId = msg.payload.player.id;
+                    console.log('the user id is ' + this.userId);
+
+                    if(!this.playerInitialized) {
+                        const serverX = msg.payload.player.x;
+                        const serverY = msg.payload.player.y;
+
+                        this.player = this.physics.add.sprite(serverX,serverY, "atlas", "misa-front");
+
+                        this.physics.add.collider(this.player, world_layer!);
+                
+                        // this.player.setCollideWorldBounds(true);
+                
+                        camera.startFollow(this.player);
+                        this.playerInitialized = true;
+
+
+                    }
+                    msg.payload.players.map((obj : {id: string, x: number, y: number}) => {
+                        if(this.userId != obj.id) {
+                            this.playerList.set(obj.id, obj);
+                            this.playerVelocity.set(obj.id, {vx: 0, vy: 0});
+                            this.playerMap.set(obj.id, this.physics.add.sprite(obj.x,obj.y, "atlas", "misa-front"));
+                        }
+                    })
+                    console.log(this.playerMap);
+                    break;
+                case 'player-joined': 
+                    const new_player = this.physics.add.sprite(msg.payload.x,msg.payload.y, "atlas", "misa-front")
+                    this.playerList.set(msg.payload.id, msg.payload);
+                    this.playerMap.set(msg.payload.id, new_player);
+
+                    // this.physics.add.collider(world_layer!, new_player)
+                    // this.physics.add.collider(this.player, new_player);
+                    // new_player.setCollideWorldBounds(true);
+
+                    this.playerMap.forEach((sprite, clientId) => {
+                        if(clientId != msg.payload.id && sprite != new_player) {
+                            this.physics.add.collider(sprite, new_player);
+                        }
+                    })
+                    break;
+                case 'player-movement':
+                    // console.log(msg.payload);
+                    this.playerList.get(msg.payload.id)!.x = msg.payload.x;
+                    this.playerList.get(msg.payload.id)!.y = msg.payload.y;
+                    this.playerVelocity.get(msg.payload.id)!.vx = msg.payload.velocity.x;
+                    this.playerVelocity.get(msg.payload.id)!.vy = msg.payload.velocity.y;
+                    break;
+                case 'player-left':
+                    this.playerList.delete(msg.payload.id);
+                    this.playerVelocity.delete(msg.payload.id);
+                    const getSprite = this.playerMap.get(msg.payload.id);
+                    this.playerMap.delete(msg.payload.id);
+                    getSprite?.destroy();
+            }
+         }
         
         // const debugGraphics = this.add.graphics().setAlpha(0.75);
 
@@ -193,15 +241,17 @@ export class ModularScene extends Scene {
             if(this.prevPosition.x === x && this.prevPosition.y === y) return;
         }
         // console.log(`The velocity is ${velocityX} and ${velocityY}`);
-        this.networkManager.sendMessage("user-move", ({
+        this.socket.send(JSON.stringify({
+            type: "user-move", 
+            payload: {
                 x,
                 y,
                 velocity: {
                     vx: velocityX,
                     vy: velocityY 
                 }
+            }
         }))
-
         this.prevPosition.x = x;
         this.prevPosition.y = y;
     }
@@ -247,71 +297,7 @@ export class ModularScene extends Scene {
     }
 
     
-    initNetworkHandlers() {
-        this.networkManager.on('init', (payload: any) => {
-            this.userId = payload.player.id;
-            console.log("does the control reach here?");
-            if(!this.playerInitialized) {
-                    console.log("does the control reach here?");
-                    const serverX = payload.player.x;
-                    const serverY = payload.player.y;
-
-                    this.player = this.physics.add.sprite(serverX,serverY, "atlas", "misa-front");
-
-                    this.physics.add.collider(this.player, this.world_layer!);
-
-                    this.camera.startFollow(this.player);
-                    this.playerInitialized = true;
-            }
-            payload.players.map((obj : {id: string, x: number, y: number}) => {
-                if(this.userId != obj.id) {
-                    this.playerList.set(obj.id, obj);
-                    this.playerVelocity.set(obj.id, {vx: 0, vy: 0});
-                    this.playerMap.set(obj.id, this.physics.add.sprite(obj.x,obj.y, "atlas", "misa-front"));
-                }
-            })
-        });
-
-        this.networkManager.on('player-joined', (payload: any) => {
-                const new_player = this.physics.add.sprite(payload.x,payload.y, "atlas", "misa-front")
-                this.playerList.set(payload.id, payload);
-                this.playerMap.set(payload.id, new_player);
-
-                this.playerMap.forEach((sprite, clientId) => {
-                    if(clientId != payload.id && sprite != new_player) {
-                        this.physics.add.collider(sprite, new_player);
-                    }
-                })
-        })
-
-        this.networkManager.on('player-movement', (payload: any) => {
-            this.playerList.get(payload.id)!.x = payload.x;
-            this.playerList.get(payload.id)!.y = payload.y;
-            this.playerVelocity.get(payload.id)!.vx = payload.velocity.x;
-            this.playerVelocity.get(payload.id)!.vy = payload.velocity.y;
-        })
-
-        this.networkManager.on('player-left', (payload: any) => {
-            this.playerList.delete(payload.id);
-            this.playerVelocity.delete(payload.id);
-            const getSprite = this.playerMap.get(payload.id);
-            this.playerMap.delete(payload.id);
-            getSprite?.destroy();
-        })
-
-        this.networkManager.markHandlersRegistered();
-    }
-
-    handleSceneShutdown() {
-        console.log('Scene is shutting down, cleaning up network handlers');
-        this.networkManager.off('init', this.initNetworkHandlers);
-        this.networkManager.off('player-joined', this.initNetworkHandlers);
-        this.networkManager.off('player-movement', this.initNetworkHandlers);
-        this.networkManager.off('player-left', this.initNetworkHandlers);
-
-        this.events.off('shutdown', this.handleSceneShutdown, this);
-
-    }
+  
 
     update(time : any, delta : any) {
         this.controls.update(delta);

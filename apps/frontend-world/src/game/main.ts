@@ -1,9 +1,11 @@
 import { AUTO, Game } from 'phaser';
-import { ModularScene } from './scenes/ModularScene';
+import { ModularScene } from './scenes/ModularScene.js';
+import { NetworkManager } from './NetworkManager.js';
 
 
 import { useEffect } from 'react';
 import { EncounterScene } from './scenes/EncounterScene';
+
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -25,6 +27,9 @@ const config: Phaser.Types.Core.GameConfig = {
         EncounterScene
     ]
 };
+
+const networkManager = NetworkManager.getInstance();
+networkManager.connect();
 
 const StartGame = (parent: string) => {
 

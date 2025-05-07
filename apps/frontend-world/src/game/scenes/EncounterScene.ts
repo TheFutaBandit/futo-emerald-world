@@ -245,10 +245,16 @@ export class EncounterScene extends Phaser.Scene{
 
     leaveMapEncounter(pokemonCaught = false) {
         console.log('leaving map encounter');
-        this.scene.start('Modular-Scene', {
-            pokemonCaught: pokemonCaught,
-            pokemon: this.pokemon
-        })
+
+        if(pokemonCaught && this.pokemon) {
+            this.scene.start('Modular-Scene', {
+                pokemonCaught: true,
+                pokemonId: this.pokemonData.type,
+            })
+        } else {
+            this.scene.start('Modular-Scene');
+        }
+        
     }
 
     showResultMessage(success: boolean, reward: number, errorMsg : any = null) {

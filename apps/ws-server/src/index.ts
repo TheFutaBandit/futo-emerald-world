@@ -58,6 +58,7 @@ wss.on('connection', function connection(ws) {
 
   ws.on('message', (message) => {
     const parsedMessage = JSON.parse(message.toString());
+    console.log(parsedMessage);
     switch (parsedMessage.type) {
         case 'user-move': 
             broadcast({
