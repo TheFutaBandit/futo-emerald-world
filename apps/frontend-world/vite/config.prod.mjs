@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 const phasermsg = () => {
     return {
@@ -21,7 +22,17 @@ export default defineConfig({
     base: './',
     plugins: [
         react(),
-        phasermsg()
+        phasermsg(),
+        nodePolyfills({
+            // Enable node polyfills for Solana
+            globals: {
+                Buffer: true,
+                global: true,
+                process: true,
+            },
+            // Enable specific node built-in modules
+            protocolImports: true,
+        }),
     ],
     logLevel: 'warning',
     build: {

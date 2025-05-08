@@ -19,7 +19,6 @@ export function InventorySection() {
                 console.log("Pokeballs bought successfully");
                 setPokeballs(pokeballs + 10);
             }
-            setPokeballs(pokeballs + 10);
         } catch (error) {
             console.log("Error buying pokeballs", error);
         }
@@ -31,7 +30,7 @@ export function InventorySection() {
             <p>Here you can see your inventory</p>
             {err && <div>{err}</div>}
             <div>see your pokeballs: {pokeballs}</div>
-            <button onClick = {handleBuyPokeball} disabled = {!loading}>Buy Pokeball</button>
+            <button onClick = {handleBuyPokeball} disabled = {loading}>Buy Pokeball</button>
         </div>
     )
 }

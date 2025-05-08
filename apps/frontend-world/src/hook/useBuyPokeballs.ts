@@ -1,30 +1,41 @@
-import { useState } from 'react';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey, Transaction } from '@solana/web3.js';
+import { 
+    useState 
+} from 'react';
 
 import { 
-    createTransferInstruction, 
-    getAssociatedTokenAddressSync,
-    TOKEN_2022_PROGRAM_ID 
-  } from '@solana/spl-token';
+    useConnection, 
+    useWallet 
+} from '@solana/wallet-adapter-react';
 
+import {
+    createTransferInstruction,
+    createAssociatedTokenAccountInstruction,
+    TOKEN_2022_PROGRAM_ID,
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+    getAssociatedTokenAddress,
+    getAccount
+} from "@solana/spl-token";
 
+import {
+    PublicKey,
+    Transaction,
+} from "@solana/web3.js";
 
 export default function useBuyPokeballs() {
     const { connection } = useConnection();
-    const { publicKey, signTransaction } = useWallet();
+    const { publicKey, sendTransaction } = useWallet();
 
     const [loading, setLoading] = useState<boolean>(false);
     const [err, setErr] = useState<string | null>(null);
     const [tx, setTx] = useState<string | null>(null);
 
-    const BOSS_WALLET_ADDRESS = new PublicKey('7YcM2pScrnZEjoDu2STaS83BtmDujJHZ86Ei9CUnUeCL');
+    const BOSS_WALLET_ADDRESS = new PublicKey('boswbs31EkPMqWxZXdg5dExycARpikXkB3qMpH3YEjs');
     const MINT_ADDRESS = new PublicKey('mnteCTzzYLmuu4pV26oLrrm1rv4zjEpufRv2DsuguEb');
 
-    const buyPokeballsFunction = async(amount: number = 10, cost: number = 10) => {
-        if(!publicKey || !signTransaction) {
+    const buyPokeballsFunction = async(amount: number = 10, cost: number = 100) => {
+        if(!publicKey) {
             setErr('Wallet not connected');
-            return;
+            return { success: false, error: 'Wallet not connected' };
         }
 
         try {
@@ -32,67 +43,72 @@ export default function useBuyPokeballs() {
             setErr(null);
             setTx(null);
 
-            const userTokenAccount = getAssociatedTokenAddressSync(
+            // Get the user's token account
+            const userTokenAccount = await getAssociatedTokenAddress(
                 MINT_ADDRESS,
                 publicKey,
                 false,
                 TOKEN_2022_PROGRAM_ID
             );
+            console.log("User token account:", userTokenAccount.toString());
 
-            const bossTokenAccount = getAssociatedTokenAddressSync(
+            // Get the boss's token account
+            const bossTokenAccount = await getAssociatedTokenAddress(
                 MINT_ADDRESS,
                 BOSS_WALLET_ADDRESS,
                 false,
                 TOKEN_2022_PROGRAM_ID
             );
+            console.log("Boss token account:", bossTokenAccount.toString());
 
-            const transferInstruction = createTransferInstruction(
-                userTokenAccount,
-                bossTokenAccount,
-                publicKey,
-                cost * Math.pow(10, 9),
-                [],
-                TOKEN_2022_PROGRAM_ID
-            )
+            const transaction = new Transaction();
 
-            const transaction = new Transaction().add(transferInstruction);
+            // Check if the user's token account exists, create it if not
+            try {
+                await getAccount(connection, userTokenAccount, 'confirmed', TOKEN_2022_PROGRAM_ID);
+                console.log("User token account exists");
+            } catch (error) {
+                console.log("Creating user token account");
+                // Create the user's token account
+                transaction.add(
+                    createAssociatedTokenAccountInstruction(
+                        publicKey,
+                        userTokenAccount,
+                        publicKey,
+                        MINT_ADDRESS,
+                        TOKEN_2022_PROGRAM_ID,
+                        ASSOCIATED_TOKEN_PROGRAM_ID
+                    )
+                );
+            }
 
-            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-            transaction.recentBlockhash = blockhash;
-            transaction.feePayer = publicKey;
+            // Add the transfer instruction
+            // Make sure to use the TOKEN_2022_PROGRAM_ID here
+            transaction.add(
+                createTransferInstruction(
+                    userTokenAccount,
+                    bossTokenAccount,
+                    publicKey,
+                    cost * (10**9), // Assuming 9 decimals
+                    [],
+                    TOKEN_2022_PROGRAM_ID
+                )
+            );
 
-            const signedTransaction = await signTransaction(transaction);
+            // Send the transaction
+            const signature = await sendTransaction(transaction, connection);
+            console.log("Transaction sent:", signature);
 
-            const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-
-            console.log('Transaction Signature', signature);
-
-            const confirmation = await connection.confirmTransaction({
-                blockhash,
-                lastValidBlockHeight,
-                signature
-            });
-
-            if(confirmation.value.err) {
+            // Wait for confirmation
+            const confirmation = await connection.confirmTransaction(signature, 'confirmed');
+            if (confirmation.value.err) {
                 throw new Error(`Transaction failed: ${confirmation.value.err}`);
             }
 
-            console.log('Transaction confirmed');
             setTx(signature);
+            console.log(`Successfully purchased ${amount} pokeballs!`);
+            return { success: true, signature };
 
-            //backend update about inventory
-
-            const flag = true;
-
-            if(flag) {
-                console.log(`Successfully purchased ${amount} pokeballs!`);
-                return {
-                  success: true,
-                  signature,
-                };
-            } else {
-                throw new Error('Failed to update inventory');
-            }
         } catch (error: any) {
             console.error('Error buying pokeballs:', error);
             setErr(error.message);
@@ -111,5 +127,4 @@ export default function useBuyPokeballs() {
         err, 
         tx
     };    
-
 }
