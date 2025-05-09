@@ -19,6 +19,16 @@ model User {
   username String  @unique
   password String 
   role     Role
+  inventory Inventory?
+}
+
+model Inventory {
+  id                String   @id @unique @default(cuid())
+  userId            String   @unique
+  standardPokeball  Int      @default(0)
+  greatPokeball     Int      @default(0)
+  ultraPokeball     Int      @default(0)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)   
 }
 
 enum Role {

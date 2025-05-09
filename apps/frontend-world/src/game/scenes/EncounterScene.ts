@@ -55,6 +55,16 @@ export class EncounterScene extends Phaser.Scene{
     catchButton: Phaser.GameObjects.Text;
     pokeballCount: number;
     encounterImage: Phaser.GameObjects.Image;
+    pokeballTypes: {
+        [key: string]: {
+            name: string,
+            sprite: string,
+            rate: number,
+            count: number
+        }
+    };
+    selectedPokeball: string;
+    pokeballButtons: {[key: string]: Phaser.GameObjects.Text};
 
     constructor () {
         super('EncounterScene');
@@ -63,15 +73,43 @@ export class EncounterScene extends Phaser.Scene{
     init(data : any) {
         this.pokemonData = data.pokemonData;
         this.pokemon = data.pokemon;
+
+        this.pokeballTypes = {
+            standard: {
+                name: "Pokeball",
+                sprite: "pokeball",
+                rate: 100,
+                count: 5 // This would come from inventory
+            },
+            great: {
+                name: "Great Ball",
+                sprite: "greatball",
+                rate: 50,
+                count: 3 // This would come from inventory
+            },
+            ultra: {
+                name: "Ultra Ball",
+                sprite: "ultraball",
+                rate: 1,
+                count: 5 // This would come from inventory
+            }
+        };
+
+        this.selectedPokeball = "standard";
+        this.pokeballButtons = {};
     }
 
     preload() {
         this.load.image('background', 'assets/images/background.jpg');
         this.load.image('pokemon-large', 'assets/images/solgaleoLargeNoBg.png');
         this.load.image('pokeball', 'assets/images/pokeball.png');
+        this.load.image('greatball', 'assets/images/greatball.png')
+        this.load.image('ultraball', 'assets/images/ultraball.png')
     }
 
     create() {
+        console.log("scene bus: ", EventBus);
+
         this.add.image(400,300, 'background').setOrigin(0.5, 0.5).setScale(1.125);
         this.encounterImage = this.add.image(400,300, 'pokemon-large').setOrigin(0.5, 0.5).setScale(0.5);
 
@@ -79,11 +117,14 @@ export class EncounterScene extends Phaser.Scene{
         this.add.text(50, 80, `Bounty: ${this.pokemonData.bounty} PokeCoins`).setStyle({fontSize: '18px', backgroundColor: "#000", fontFamily: 'Arial', color: '#fff'});
         this.add.text(50, 110, `Multiplier: ${this.pokemonData.multiplier}x`).setStyle({fontSize: '18px', backgroundColor: "#000", fontFamily: 'Arial', color: '#fff'});
 
-        this.catchButton = this.add.text(400, 350, 'Catch (1 Pokeball)')
-        .setStyle({fontSize: '20px', backgroundColor: "#008800", fontFamily: 'Arial', color: '#fff', padding: { x: 10, y: 5 }})
-        .setOrigin(0.5)
-        .setInteractive({ useHandCursor: true })
-        .on('pointerdown', () => this.attemptCatch());
+        // this.catchButton = this.add.text(400, 350, 'Catch (1 Pokeball)')
+        // .setStyle({fontSize: '20px', backgroundColor: "#008800", fontFamily: 'Arial', color: '#fff', padding: { x: 10, y: 5 }})
+        // .setOrigin(0.5)
+        // .setInteractive({ useHandCursor: true })
+        // .on('pointerdown', () => this.attemptCatch());
+        this.createPokeballSelectors();
+        this.updatePokeballButtonStates();
+        this.initGameFunction();
 
         this.add.text(400, 400, 'Leave')
         .setStyle({fontSize: '20px', backgroundColor: "#880000", fontFamily: 'Arial', color: '#fff', padding: { x: 10, y: 5 }})
@@ -91,9 +132,100 @@ export class EncounterScene extends Phaser.Scene{
         .setInteractive({ useHandCursor: true })
         .on('pointerdown', () => this.leaveMapEncounter());
 
-        this.initGameFunction();
 
+
+        
         EventBus.emit('current-scene-ready', this);
+    }
+
+    createPokeballSelectors() {
+        const yPosition = 350;
+        let xPosition = 250;
+        const spacing = 150;
+
+        Object.keys(this.pokeballTypes).forEach((type, index) => {
+            const pokeballData = this.pokeballTypes[type];
+
+            const pokeballImage = this.add.image(xPosition, yPosition - 40, pokeballData.sprite).setScale(0.1);
+
+            const buttonText = this.add.text(xPosition, yPosition, 
+                `${pokeballData.name} (${pokeballData.count})`)
+                .setStyle({
+                    fontSize: '16px', 
+                    backgroundColor: type === this.selectedPokeball ? "#008800" : "#444444", 
+                    fontFamily: 'Arial', 
+                    color: '#fff', 
+                    padding: { x: 10, y: 5 }
+                })
+                .setOrigin(0.5)
+                .setInteractive({ useHandCursor: true })
+                .on('pointerdown', () => this.selectPokeball(type));
+
+            this.pokeballButtons[type] = buttonText;
+
+            this.add.text(xPosition, yPosition + 30, `Catch Rate: ${pokeballData.rate}x`)
+                .setStyle({fontSize: '12px', fontFamily: 'Arial', color: '#fff'})
+                .setOrigin(0.5);
+
+                xPosition += spacing;
+
+            });
+
+            this.catchButton = this.add.text(400, 425, `Throw ${this.pokeballTypes[this.selectedPokeball].name}`)
+            .setStyle({fontSize: '20px', backgroundColor: "#008800", fontFamily: 'Arial', color: '#fff', padding: { x: 15, y: 8 }})
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true })
+            .on('pointerdown', () => this.attemptCatch());
+    }
+
+    selectPokeball(type: string) {
+        if (this.pokeballTypes[type].count <= 0) {
+            return;
+        }
+
+        this.selectedPokeball = type;
+        this.updatePokeballButtonStates();
+
+        this.catchButton.setText(`Throw ${this.pokeballTypes[type].name}`);
+    }
+
+    updatePokeballButtonStates() {
+        // Update all button styles based on selection and availability
+        Object.keys(this.pokeballButtons).forEach(type => {
+            const button = this.pokeballButtons[type];
+            const count = this.pokeballTypes[type].count;
+            
+            // Update button text to show current count
+            button.setText(`${this.pokeballTypes[type].name} (${count})`);
+            
+            if (count <= 0) {
+                // Disable appearance if no pokeballs of this type
+                button.setStyle({
+                    fontSize: '16px',
+                    backgroundColor: "#666666",
+                    color: "#aaaaaa",
+                    padding: { x: 10, y: 5 }
+                });
+                button.disableInteractive();
+            } else if (type === this.selectedPokeball) {
+                // Selected style
+                button.setStyle({
+                    fontSize: '16px',
+                    backgroundColor: "#008800",
+                    color: "#ffffff",
+                    padding: { x: 10, y: 5 }
+                });
+            } else {
+                // Available but not selected style
+                button.setStyle({
+                    fontSize: '16px',
+                    backgroundColor: "#444444",
+                    color: "#ffffff",
+                    padding: { x: 10, y: 5 }
+                });
+                button.setInteractive({ useHandCursor: true });
+            }
+        });
     }
 
     async initGameFunction() {
@@ -102,11 +234,32 @@ export class EncounterScene extends Phaser.Scene{
     }
 
     async attemptCatch() {
-        this.catchButton.disableInteractive();
-  
-        this.updateCatchButtonState();
+        if (this.pokeballTypes[this.selectedPokeball].count <= 0) {
+            return;
+        }
 
-        const pokeball = this.add.image(150, 350, 'pokeball').setScale(0.1);
+        this.catchButton.disableInteractive();
+
+        EventBus.emit('catch-attempt', { pokeballType: this.selectedPokeball });
+
+        this.pokeballTypes[this.selectedPokeball].count--;
+        this.updatePokeballButtonStates();
+  
+        // this.updateCatchButtonState();
+
+        if (this.pokeballTypes[this.selectedPokeball].count <= 0) {
+            const availableType = Object.keys(this.pokeballTypes).find(type => 
+                this.pokeballTypes[type].count > 0);
+                
+            if (availableType) {
+                this.selectedPokeball = availableType;
+                this.updatePokeballButtonStates();
+            }
+        }
+
+        const pokeballSprite = this.pokeballTypes[this.selectedPokeball].sprite;
+
+        const pokeball = this.add.image(150, 350, pokeballSprite).setScale(0.1);
 
         this.tweens.add({
             targets: pokeball,
@@ -121,6 +274,7 @@ export class EncounterScene extends Phaser.Scene{
     async processCatchResult(pokeball: Phaser.GameObjects.Image) {
         console.log('Processing catch result...');
         this.catchButton.disableInteractive();
+        
 
         try {
             const response = await axios.post(`${BACKEND_URL}/api/v1/solana/catch`, {
@@ -128,8 +282,8 @@ export class EncounterScene extends Phaser.Scene{
                 pokemonDifficulty: this.pokemonData.difficulty,
                 pokemonBounty: this.pokemonData.bounty,
                 pokemonMultiplier: this.pokemonData.multiplier,
-                ball_rate: this.pokeballCount,
-                userWallet: '7YcM2pScrnZEjoDu2STaS83BtmDujJHZ86Ei9CUnUeCL' 
+                ball_rate: this.pokeballTypes[this.selectedPokeball].rate,
+                userWallet: '7YcM2pScrnZEjoDu2STaS83BtmDujJHZ86Ei9CUnUeCL' //bring the wallet here too
             });
     
             
@@ -193,8 +347,11 @@ export class EncounterScene extends Phaser.Scene{
                                     this.showResultMessage(false, 0);
                                     
                                     // Re-enable catch button if player still has pokeballs
-                                    if (this.pokeballCount > 0) {
+                                    const hasAnyPokeballs = Object.values(this.pokeballTypes).some(ball => ball.count > 0);
+                                    if (hasAnyPokeballs) {
                                         this.catchButton.setInteractive({ useHandCursor: true });
+                                    } else {
+                                        this.showNoPokeballs();
                                     }
                                 }
                             });
@@ -213,9 +370,34 @@ export class EncounterScene extends Phaser.Scene{
         }
     }
 
+    showNoPokeballs() {
+        this.catchButton.setStyle({ 
+            backgroundColor: "#666666",
+            color: "#aaaaaa"
+        });
+        this.catchButton.disableInteractive();
+
+        const hintText = this.add.text(400, 460, "No more Pokeballs left. Press 'Leave' to exit.")
+        .setOrigin(0.5)
+        .setStyle({
+            fontSize: '14px',
+            backgroundColor: "#000000",
+            padding: { x: 8, y: 4 },
+            color: '#ffffff'
+        });
+
+        this.tweens.add({
+            targets: hintText,
+            alpha: { from: 1, to: 0.5 },
+            yoyo: true,
+            repeat: 3,
+            duration: 300
+        });
+    }
+
     updateCatchButtonState() {
         this.pokeballCount--;
-        this.catchButton.setText(`Catch (${this.pokeballCount} Pokeballs left)`);
+        // this.catchButton.setText(`Catch (${this.pokeballCount} Pokeballs left)`);
 
         if(this.pokeballCount <= 0) {
             this.catchButton.setStyle({ 

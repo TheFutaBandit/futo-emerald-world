@@ -162,15 +162,15 @@ export const updatePokeballCount = async (req: Request, res: Response): Promise<
         switch (pokeballType) {
             case "standard":
               currentCount = inventory.standardPokeball;
-              updateData.standardPokeballs = Math.max(0, currentCount - usedCount);
+              updateData.standardPokeball = Math.max(0, currentCount - usedCount);
               break;
             case "great":
               currentCount = inventory.greatPokeball;
-              updateData.greatPokeballs = Math.max(0, currentCount - usedCount);
+              updateData.greatPokeball = Math.max(0, currentCount - usedCount);
               break;
             case "ultra":
               currentCount = inventory.ultraPokeball;
-              updateData.ultraPokeballs = Math.max(0, currentCount - usedCount);
+              updateData.ultraPokeball = Math.max(0, currentCount - usedCount);
               break;
             default:
               return res.status(400).json({

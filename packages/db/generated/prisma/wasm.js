@@ -127,6 +127,14 @@ exports.Prisma.UserScalarFieldEnum = {
   role: 'role'
 };
 
+exports.Prisma.InventoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  standardPokeball: 'standardPokeball',
+  greatPokeball: 'greatPokeball',
+  ultraPokeball: 'ultraPokeball'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -142,7 +150,8 @@ exports.Role = exports.$Enums.Role = {
 };
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Inventory: 'Inventory'
 };
 
 /**
