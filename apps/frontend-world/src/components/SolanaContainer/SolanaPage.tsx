@@ -6,10 +6,19 @@ import {
 import useAirdrop from '../../hook/useAirdrop';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { InventorySection } from './InventorySection';
+import { useEffect } from 'react';
+import { EventBus } from '../../game/EventBus';
 
 export function SolanaPage() {
     const { requestAirdropFunction, loading, err, tx } = useAirdrop()
     const { publicKey } = useWallet();
+
+    useEffect(() => {
+        if(publicKey){
+            EventBus.emit('user-wallet', {publicKey: publicKey});
+        }
+    }, [publicKey])
+
     return (
         <div>
             {publicKey ? 

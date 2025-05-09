@@ -32,7 +32,7 @@ const networkManager = NetworkManager.getInstance();
 networkManager.connect();
 
 const StartGame = (parent: string) => {
-
+    
     return new Game({ ...config, parent });
 
 }

@@ -58,8 +58,14 @@ export function InventorySection() {
         
         EventBus.addListener('catch-attempt', catchAttemptCallback);
 
+        EventBus.on('get-inventory-for-scene', () => {
+            console.log("sending payload inventory");
+            EventBus.emit('receive-inventory', {inventory: inventory});
+        })
+
         return () => {
             EventBus.removeListener('catch-attempt', catchAttemptCallback);
+            EventBus.removeListener('get-inventory-for-scene')
         }
     }, [])
 

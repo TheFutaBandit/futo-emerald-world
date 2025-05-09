@@ -1,5 +1,7 @@
 import axios from "axios";
 import { EventBus } from "../EventBus";
+import { Wallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
 
 const BACKEND_URL = 'http://localhost:3000'
 
@@ -8,6 +10,13 @@ interface prevPosition {
     x: number, 
     y: number
 }
+
+interface Inventory {
+    standardPokeball: number;
+    greatPokeball: number;
+    ultraPokeball: number;
+}
+
 
 interface PokemonSprite extends Phaser.Types.Physics.Arcade.SpriteWithDynamicBody {
     pokemonData: {
@@ -65,6 +74,7 @@ export class EncounterScene extends Phaser.Scene{
     };
     selectedPokeball: string;
     pokeballButtons: {[key: string]: Phaser.GameObjects.Text};
+    userWallet: PublicKey | null;
 
     constructor () {
         super('EncounterScene');
@@ -73,6 +83,8 @@ export class EncounterScene extends Phaser.Scene{
     init(data : any) {
         this.pokemonData = data.pokemonData;
         this.pokemon = data.pokemon;
+
+       
 
         this.pokeballTypes = {
             standard: {
@@ -95,8 +107,19 @@ export class EncounterScene extends Phaser.Scene{
             }
         };
 
+        console.log("hey so am I even running")
+        EventBus.emit('get-inventory-for-scene');
+        EventBus.on('receive-inventory', (inventory : Inventory) => {
+            console.log("current-inventory", inventory)
+        })
+
         this.selectedPokeball = "standard";
         this.pokeballButtons = {};
+
+        EventBus.on('user-wallet', (data : { publicKey : PublicKey}) => {
+            console.log(data.publicKey);
+            this.userWallet = data.publicKey;
+        })
     }
 
     preload() {
@@ -109,6 +132,7 @@ export class EncounterScene extends Phaser.Scene{
 
     create() {
         console.log("scene bus: ", EventBus);
+        console.log("THE USER WALLET IS: ", this.userWallet);
 
         this.add.image(400,300, 'background').setOrigin(0.5, 0.5).setScale(1.125);
         this.encounterImage = this.add.image(400,300, 'pokemon-large').setOrigin(0.5, 0.5).setScale(0.5);
@@ -277,13 +301,15 @@ export class EncounterScene extends Phaser.Scene{
         
 
         try {
+            if(!this.userWallet) {throw new Error("no user wallet available")};
+
             const response = await axios.post(`${BACKEND_URL}/api/v1/solana/catch`, {
                 pokemonId: this.pokemonData.type,
                 pokemonDifficulty: this.pokemonData.difficulty,
                 pokemonBounty: this.pokemonData.bounty,
                 pokemonMultiplier: this.pokemonData.multiplier,
                 ball_rate: this.pokeballTypes[this.selectedPokeball].rate,
-                userWallet: '7YcM2pScrnZEjoDu2STaS83BtmDujJHZ86Ei9CUnUeCL' //bring the wallet here too
+                userWallet: this.userWallet //bring the wallet here too
             });
     
             

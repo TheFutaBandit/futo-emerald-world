@@ -474,8 +474,13 @@ export class ModularScene extends Scene {
         }  
     }
 
-    startPokemonEncounter(pokemon: PokemonImage) {
+    async startPokemonEncounter(pokemon: PokemonImage) {
+        const inventory = {
+            
+        }
         this.scene.sleep();
+
+
 
         this.scene.launch('EncounterScene', {
             pokemonData: pokemon.pokemonData,
