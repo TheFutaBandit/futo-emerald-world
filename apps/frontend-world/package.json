@@ -27,6 +27,7 @@
         "build-nolog": "vite build --config vite/config.prod.mjs"
     },
     "dependencies": {
+        "@rive-app/react-canvas": "^4.19.1",
         "@solana/spl-token": "^0.4.13",
         "@solana/wallet-adapter-base": "^0.9.26",
         "@solana/wallet-adapter-react": "^0.15.38",

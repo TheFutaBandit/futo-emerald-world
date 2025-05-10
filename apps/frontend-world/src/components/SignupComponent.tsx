@@ -1,6 +1,9 @@
 import  { useRef } from "react";
 import { useSignup } from "../hook/useSignup";
 
+import './styles/SignupStyles.css'
+
+
 
 export default function SignUpComponent() {
 
@@ -15,20 +18,30 @@ export default function SignUpComponent() {
     }   
 
     return (
-        <div className="signup-container">
+        <div className="signup-container" style={{
+            
+            flexGrow: "1"
+        }}>
             {err && <div>That's an error</div>}
-            <div className = "title-container"><h2>Sign-Up</h2></div>
-            <div className = "title-form">
-                <div className="username">
-                    <div>Username: </div>
-                    <input type = "text" placeholder="Enter Username" ref={usernameRef} disabled = {loading}></input>
-                </div>
-                <div className="password">
-                    <div>Password: </div>
-                    <input type = "text" placeholder="Enter Password" ref={passwordRef} disabled = {loading}></input>
-                </div>
-                <button className="submit-button" onClick={handleSubmit}>Sign-Up</button>
+            <div className = "title-container">
+                <div className = "top-title">PLACEHOLDER</div>
+                <div className = "tag-line">Gambling with Nostalgia</div>
             </div>
+            <div className ="sexy_line"></div>
+            <div className = "title-form">
+                <div className = "title-form-inputs">
+                    <div className="username">
+                        <input className = "formInput" type = "text" placeholder="Username" ref={usernameRef} disabled = {loading}></input>
+                    </div>
+                    <div className="password">
+                        <input className = "formInput" type = "text" placeholder="Password" ref={passwordRef} disabled = {loading}></input>
+                    </div>
+                </div>
+                <div className = "title-form-submit">
+                    <button className="submit-button" onClick={handleSubmit}>Sign Up</button>
+                </div>
+            </div>
+            <div className ="sexy_line"></div>
         </div>
     )
 

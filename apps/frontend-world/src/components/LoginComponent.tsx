@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { useLogin } from "../hook/useLogin";
+import './styles/LogInStyles.css'
 
 const BACKEND_URL = 'http://localhost:3000'
 
@@ -27,15 +28,13 @@ export default function LogInCompnent() {
     return (
         <div className="login-container">
             {err && <div>That's an error</div>}
-            <div className = "title-container"><h2>Log-In</h2></div>
+            <div className = "title-container">PLACEHOLDER</div>
             <div className = "title-form">
                 <div className="username">
-                    <div>Username: </div>
-                    <input type = "text" placeholder="Enter Username" ref={usernameRef} disabled = {loading}></input>
+                    <input id = "usernameInput" type = "text" placeholder="Username" ref={usernameRef} disabled = {loading}></input>
                 </div>
                 <div className="password">
-                    <div>Password: </div>
-                    <input type = "text" placeholder="Enter Password" ref={passwordRef} disabled = {loading}></input>
+                    <input id = "passwordInput" type = "text" placeholder="Password" ref={passwordRef} disabled = {loading}></input>
                 </div>
                 <button className="submit-button" onClick={handleSubmit}>Log-In</button>
             </div>
