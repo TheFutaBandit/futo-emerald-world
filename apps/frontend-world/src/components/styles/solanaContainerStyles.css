@@ -1,0 +1,150 @@
+
+@font-face {
+    font-family: "HelveticaNeueBlack";
+    src: url('./fonts/HelveticaNeueBlack.otf') format('opentype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "HelveticaNeueMedium";
+    src: url('./fonts/HelveticaNeueMedium.otf') format('opentype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "HelveticaNeueThin";
+    src: url('./fonts/HelveticaNeueThin.otf') format('opentype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "HelveticaNeueUltraLight";
+    src: url('./fonts/HelveticaNeueUltraLight.otf') format('opentype');
+    font-display: swap;
+}
+
+
+.gameboy-solana-container {
+    display: flex;
+    border: 1px solid #ecdbba21;
+    height: 600px;
+    width: 250px;
+    justify-content: center;
+}
+
+/* WalletStyles.css */
+.solana-container {
+    padding: 20px;
+    border-radius: 12px;
+    background-color: #1a1f2e;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .wallet-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  /* These selectors override the wallet adapter's default styles */
+  .wallet-adapter-button {
+    background-color: #346751 !important;
+    color: #ECDBBA !important;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 12px 20px !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+    cursor: pointer !important;
+    font-family: "HelveticaNeueMedium" !important;
+    letter-spacing: 1px;
+    margin-top: 5px !important;
+  }
+  
+  .wallet-adapter-button:hover {
+    background-color: #274e3d !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  
+  .wallet-adapter-button:disabled {
+    background-color: #424242 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  .wallet-adapter-button-disconnect {
+    background-color: #c62828 !important;
+  }
+  
+  .wallet-adapter-button-disconnect:hover {
+    background-color: #e53935 !important;
+  }
+  
+  .airdrop-button {
+    background-color: #2e7d32;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .airdrop-button:hover {
+    background-color: #388e3c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .airdrop-button:disabled {
+    background-color: #424242;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .error-message {
+    color: #f44336;
+    background-color: rgba(244, 67, 54, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 12px;
+  }
+  
+  .success-message {
+    color: #4caf50;
+    background-color: rgba(76, 175, 80, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 12px;
+  }
+
+  .multibutton-container {
+    color: #ECDBBA;
+    font-family: "HelveticaNeueMedium";
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .multibutton-container .wallet-text-below {
+    font-family: "HelveticaNeueThin";
+    font-size: 0.8em;
+    margin-top: -2px;
+  }
+
+  .multibutton-container .wallet-text-main {
+    text-align: center;
+    font-size: 0.9em;
+    margin: 30px 5px;
+    word-break: break-all;
+  }

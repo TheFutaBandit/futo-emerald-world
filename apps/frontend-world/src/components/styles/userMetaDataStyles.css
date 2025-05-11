@@ -1,0 +1,9 @@
+.user-metadata-container {
+    display: flex;
+    border: 1px solid #ecdbba21;
+    height: 600px;
+    width: 250px;
+    flex-direction: column;
+    padding: 20px 0px;
+}
+

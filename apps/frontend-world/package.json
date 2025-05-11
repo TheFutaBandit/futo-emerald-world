@@ -34,6 +34,7 @@
         "@solana/wallet-adapter-react-ui": "^0.9.38",
         "@solana/wallet-adapter-wallets": "^0.19.36",
         "@solana/web3.js": "^1.98.2",
+        "lucide-react": "^0.509.0",
         "phaser": "^3.88.2",
         "react": "^19.1.0",
         "react-dom": "^19.0.0"

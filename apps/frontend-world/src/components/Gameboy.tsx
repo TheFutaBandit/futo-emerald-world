@@ -1,6 +1,8 @@
 import App from "../App";
 import SolanaContainer from "./SolanaContainer/SolanaContainer.js";
-import './styles/solanaContainer.css'
+import UserMetadataComponent from "./UserMetadataComponent.js";
+import './styles/solanaContainerStyles.css'
+import './styles/userMetaDataStyles.css'
 
 export function Gameboy() {
     return (
@@ -13,7 +15,7 @@ export function Gameboy() {
             gap: "20px",
             backgroundColor: "#161616"
         }}>
-            <div className = "container1">Hello There</div>
+            <div className = "user-metadata-container"><UserMetadataComponent /></div>
             <div className = "gameContainer">
                 <App />
             </div>

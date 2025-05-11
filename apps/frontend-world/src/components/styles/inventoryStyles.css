@@ -1,0 +1,129 @@
+.inventory-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    flex-grow: 1;
+}
+
+.inventory-container h1{
+    font-family: "HelveticaNeueBlack";
+    color: #ECDBBA;
+}
+
+.Airdrop-Section {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    gap: 10px;
+    max-width: 193px;
+}
+
+.Airdrop-Section .token-desc {
+    font-family: "HelveticaNeueThin";
+    font-size: 0.8em;
+    color: #ECDBBA;
+    letter-spacing: 0.2px;
+    /* margin: 0px 25px; */
+}
+
+.Airdrop-Section .Airdrop-Button {
+    font-family: "HelveticaNeueMedium";
+    color: #ECDBBA;
+    background-color: #C84B31;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 30px;
+}
+
+.Airdrop-Button:hover {
+    background-color: #388e3c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+.Airdrop-Section .Airdrop-Button:disabled {
+    background-color: #772c1d;
+    cursor: none;
+    transform: none;
+}
+
+.Airdrop-Section .sol-balance-container {
+    font-family: "HelveticaNeueThin";
+    color: #ECDBBA;
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+}
+
+.inventory-container .Pokeball-Section {
+    font-family: "HelveticaNeueThin";
+    color: #ECDBBA;
+    display: flex;
+    flex-direction: column;
+}
+
+.Pokeball-Section .pokeball-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+
+.pokeball-row .pokeball-image {
+    max-width: 32px;
+    max-height: 32px;
+    object-fit: contain;
+}
+
+.inventory-container .buy-pokeball-button {
+    font-family: "HelveticaNeueMedium";
+    color: #ECDBBA;
+    background-color: #C84B31;
+    font-size: 0.9em;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 32px;
+    width: 193px;
+}
+
+.buy-pokeball-button:hover {
+    background-color: #388e3c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+.inventory-container .buy-pokeball-button:disabled {
+    background-color: #772c1d;
+    cursor: none;
+    transform: none;
+}
+
+.sexy_line_inventory { 
+    margin: 2px 0px;
+    height: 0.7px; 
+    width: 100%;
+    background: -webkit-gradient(linear, 0 0, 100% 0, from(#161616), to(#161616), color-stop(50%, #ecdbba));
+}
+
+.Pokeball-Section .pokeball-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    margin: 10px 0px;
+}
+
+.inventory-pokeball-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-grow: 1;
+    justify-content: center;
+}

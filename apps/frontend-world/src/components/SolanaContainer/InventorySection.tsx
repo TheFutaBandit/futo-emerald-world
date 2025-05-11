@@ -6,6 +6,14 @@ import { useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { EventBus } from "../../game/EventBus.js";
+import useAirdrop from '../../hook/useAirdrop';
+import { useConnection } from "@solana/wallet-adapter-react";
+import '../styles/inventoryStyles.css'
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+
+
+import { Wallet } from "lucide-react";
+import { Backpack } from "lucide-react";
 
 const BACKEND_URL = "http://localhost:3000"
 
@@ -24,8 +32,11 @@ interface Inventory {
 
 export function InventorySection() {
     const { publicKey } = useWallet();
+    const { requestAirdropFunction, loading: airdropLoading, err: airdropErr, tx: airdropTx } = useAirdrop()
     const {buyPokeballsFunction, loading, err, tx} = useBuyPokeballs();
     const [inventory, setInventory] = useState<Inventory>();
+    const [balance, setBalance] = useState(0);
+    const { connection } = useConnection();
 
     const { token } = useAuthContext();
 
@@ -75,6 +86,34 @@ export function InventorySection() {
         }
     }, [id])
 
+    useEffect(() => {
+        const updateBalance = async () => {
+          if (publicKey) {
+            connection.onAccountChange(
+              publicKey,
+              (updatedAccountInfo) => {
+                setBalance(updatedAccountInfo.lamports / LAMPORTS_PER_SOL);
+              },
+              {
+                commitment: "confirmed"
+              }
+            );
+
+            const accountInfo = await connection.getAccountInfo(publicKey);
+
+            if (accountInfo) {
+              setBalance(accountInfo.lamports / LAMPORTS_PER_SOL);
+            } else {
+              throw new Error("Account info not found");
+            }
+          } else {
+            console.error("Wallet not connected or connection unavailable");
+          }
+        };
+    
+        updateBalance();
+      }, [connection, publicKey]);
+
     const fetchInventory = async(): Promise<Inventory | null> => {
         try {
             console.log("alright I am sending the fetch request now");
@@ -110,20 +149,50 @@ export function InventorySection() {
     }
 
     return (
-        <div>
-            <h1>Inventory</h1>
-            <p>Here you can see your inventory</p>
-            {err && <div>{err}</div>}
-            {inventory ? (
-                <div>
-                    <p>Standard Pokeballs: {inventory.standardPokeball}</p>
-                    <p>Great Pokeballs: {inventory.greatPokeball}</p>
-                    <p>Ultra Pokeballs: {inventory.ultraPokeball}</p>
+        <div className = "inventory-container">
+            <h1>INVENTORY</h1>
+            <div className ="sexy_line_inventory"></div>
+            <div className="Airdrop-Section">
+                <div className = "token-desc">PokeCoins power all transactions. Airdrop some to get started.</div>
+                <button className = "Airdrop-Button" onClick = {requestAirdropFunction} disabled = {airdropLoading}>Airdrop</button>
+                {airdropErr && <div>error: {airdropErr}</div>}
+                {airdropTx && <div>Hey I have a transcation!</div>}
+                <div className = "sol-balance-container">
+                    <Wallet color="#ECDBBA" strokeWidth={"1px"} size="18px"/>
+                    <div>{balance.toFixed(4)} sol</div>
                 </div>
-            ) : (
-                <p>Loading inventory...</p>
-            )}
-            <button onClick = {handleBuyPokeball} disabled = {loading}>Buy Pokeball</button>
+            </div>
+            {err && <div>{err}</div>}
+            <div className ="sexy_line_inventory"></div>
+            <div className = "inventory-pokeball-section">
+                {inventory ? (
+                    <div className = "Pokeball-Section">
+                        <div className="pokeball-section-header">
+                            <Backpack size = "21px" strokeWidth={"1px"}/>
+                            <div style ={{transform: "translateY(1px)"}}>Backpack</div>
+                        </div>
+                        <div className = "pokeball-row">
+                            <div className = "pokeball-image"><img src = "./assets/images/new_pokeball.png"></img></div>
+                            {inventory.standardPokeball}x
+                        </div>
+                        <div className = "pokeball-row">
+                            <div className = "pokeball-image"><img src = "./assets/images/greatball.png"></img></div>
+                            {inventory.greatPokeball}x
+                        </div>
+                        <div className = "pokeball-row">
+                            <div className = "pokeball-image"><img src = "./assets/images/ultraball.png"></img></div>
+                            {inventory.ultraPokeball}x
+                        </div>
+                    </div>
+                ) : (
+                    <p style ={{color: "white", fontSize: "16px"}}>Loading inventory...</p>
+                )}
+                <div style = {{
+                    display: "flex"
+                }}>
+                    <button className = "buy-pokeball-button" onClick = {handleBuyPokeball} disabled = {loading}>Buy Pokeball (1000PKC)</button>
+                </div>
+            </div>
         </div>
     )
 }
