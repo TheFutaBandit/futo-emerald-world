@@ -76,6 +76,7 @@ export class EncounterScene extends Phaser.Scene{
     pokeballButtons: {[key: string]: Phaser.GameObjects.Text};
     userWallet: PublicKey | null;
 
+
     constructor () {
         super('EncounterScene');
     }
@@ -107,14 +108,25 @@ export class EncounterScene extends Phaser.Scene{
             }
         };
 
-        console.log("hey so am I even running")
-        EventBus.emit('get-inventory-for-scene');
-        EventBus.on('receive-inventory', (inventory : Inventory) => {
-            console.log("current-inventory", inventory)
-        })
-
         this.selectedPokeball = "standard";
         this.pokeballButtons = {};
+
+        console.log("hey so am I even running")
+        EventBus.emit('get-inventory-for-scene');
+        EventBus.on('receive-inventory', (inventory: Inventory) => {
+            console.log("current-inventory", inventory);
+            if(inventory) {
+                this.pokeballTypes.standard.count = inventory.standardPokeball;
+                this.pokeballTypes.great.count = inventory.greatPokeball;
+                this.pokeballTypes.ultra.count = inventory.ultraPokeball;
+                
+                if (this.pokeballButtons) {
+                    this.updatePokeballButtonStates();
+                }
+            }
+        });
+
+        
 
         EventBus.on('user-wallet', (data : { publicKey : PublicKey}) => {
             console.log(data.publicKey);
@@ -125,7 +137,7 @@ export class EncounterScene extends Phaser.Scene{
     preload() {
         this.load.image('background', 'assets/images/background.jpg');
         this.load.image('pokemon-large', 'assets/images/solgaleoLargeNoBg.png');
-        this.load.image('pokeball', 'assets/images/pokeball.png');
+        this.load.image('pokeball', 'assets/images/new_pokeball.png');
         this.load.image('greatball', 'assets/images/greatball.png')
         this.load.image('ultraball', 'assets/images/ultraball.png')
     }

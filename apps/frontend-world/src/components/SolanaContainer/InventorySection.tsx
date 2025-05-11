@@ -44,18 +44,18 @@ export function InventorySection() {
 
 
     useEffect(() => {
-        console.log("inventory bus: ", EventBus);
+        
 
         const catchAttemptCallback = async () => {
             try {
-                console.log("hey do I even send a request for update")
+                
                 const updateResponse = await axios.post(`${BACKEND_URL}/api/v1/pokeball/update`, {
                     userId: id,
                     pokeballType: "standard",
                     usedCount: 1
                 })
 
-                console.log(updateResponse.data);
+                
 
                 if(updateResponse.data.success) {
                     setInventory(updateResponse.data.inventory);
@@ -70,15 +70,16 @@ export function InventorySection() {
         EventBus.addListener('catch-attempt', catchAttemptCallback);
 
         EventBus.on('get-inventory-for-scene', () => {
-            console.log("sending payload inventory");
-            EventBus.emit('receive-inventory', {inventory: inventory});
-        })
+            console.log("Sending inventory to game scene:", inventory);
+            // Send the inventory object directly, not wrapped in another object
+            EventBus.emit('receive-inventory', inventory);
+        });
 
         return () => {
             EventBus.removeListener('catch-attempt', catchAttemptCallback);
             EventBus.removeListener('get-inventory-for-scene')
         }
-    }, [])
+    }, [inventory])
 
     useEffect(() => {
         if(id) {
@@ -116,7 +117,7 @@ export function InventorySection() {
 
     const fetchInventory = async(): Promise<Inventory | null> => {
         try {
-            console.log("alright I am sending the fetch request now");
+            
             const response = await axios.get(`${BACKEND_URL}/api/v1/pokeball/inventory`, {
                 params: {
                     id
@@ -147,6 +148,16 @@ export function InventorySection() {
             console.log("Error buying pokeballs", error);
         }
     }
+
+    useEffect(() => {
+        EventBus.on('get-inventory-for-scene', () => {
+            console.log("Sending inventory to game scene:", inventory);
+            EventBus.emit('receive-inventory', inventory);
+          });
+          return () => {
+            EventBus.removeListener('get-inventory-for-scene');
+          };
+    }, [])
 
     return (
         <div className = "inventory-container">
