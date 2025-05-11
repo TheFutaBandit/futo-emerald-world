@@ -30,6 +30,7 @@ export const signupController = async (req : Request, res : Response) : Promise<
         const token = jwt.sign({
             id: user.id,
             userRole: user.role,
+            username: user.username
         }, JWT_PASSWORD)
 
         res.json({
@@ -78,6 +79,7 @@ export const loginController = async (req : Request, res : Response) : Promise<a
     const token = jwt.sign({
         id: user.id,
         userRole: user.role,
+        username: user.username
     }, JWT_PASSWORD)
 
     res.status(200).json({

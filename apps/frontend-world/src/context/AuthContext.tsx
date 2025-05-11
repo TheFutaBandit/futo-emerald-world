@@ -30,7 +30,8 @@ export const AuthContext = createContext<AuthContextType>({
 
 interface jwt_payload {
     userId: string,
-    userRole: string
+    userRole: string,
+    username: string
 }
 
 function reducer(state : state, action : action) {
@@ -39,13 +40,21 @@ function reducer(state : state, action : action) {
             const { token } = action.payload;
             const jwt_payload = jwtDecode(token) as jwt_payload;
             const userId = jwt_payload.userId;
+            const username = jwt_payload.username;
             localStorage.setItem("token", token);
             localStorage.setItem("userId", userId);
+            localStorage.setItem("username", username);
             return {...state, token};   
         };
         case(SignLog.SignUp) : {
             const { token } = action.payload;
+            const jwt_payload = jwtDecode(token) as jwt_payload;
+            console.log(jwt_payload);
+            const userId = jwt_payload.userId;
+            const username = jwt_payload.username;
             localStorage.setItem("token", token);
+            localStorage.setItem("userId", userId);
+            localStorage.setItem("username", username);
             console.log({...state, token});
             return {...state, token};  
         };  

@@ -168,8 +168,8 @@ export function InventorySection() {
                 {inventory ? (
                     <div className = "Pokeball-Section">
                         <div className="pokeball-section-header">
-                            <Backpack size = "21px" strokeWidth={"1px"}/>
-                            <div style ={{transform: "translateY(1px)"}}>Backpack</div>
+                            <Backpack size = "24px" strokeWidth={"1.5px"}/>
+                            <div style ={{transform: "translateY(1px)"}}>BACKPACK</div>
                         </div>
                         <div className = "pokeball-row">
                             <div className = "pokeball-image"><img src = "./assets/images/new_pokeball.png"></img></div>

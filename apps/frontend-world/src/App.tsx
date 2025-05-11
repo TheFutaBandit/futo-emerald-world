@@ -43,7 +43,7 @@ function App()
     }
 
     return (
-        <div id="app">
+        <div id="app" style={{boxShadow: "0px 0px 46px -17px rgba(236, 219, 186, 0.37)", border: "1px solid rgba(236, 219, 186, 0.2)"}}>
             <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
         </div>
     )

@@ -150,7 +150,7 @@ export class EncounterScene extends Phaser.Scene{
         this.updatePokeballButtonStates();
         this.initGameFunction();
 
-        this.add.text(400, 400, 'Leave')
+        this.add.text(400, 550, 'Leave')
         .setStyle({fontSize: '20px', backgroundColor: "#880000", fontFamily: 'Arial', color: '#fff', padding: { x: 10, y: 5 }})
         .setOrigin(0.5)
         .setInteractive({ useHandCursor: true })
@@ -163,7 +163,7 @@ export class EncounterScene extends Phaser.Scene{
     }
 
     createPokeballSelectors() {
-        const yPosition = 350;
+        const yPosition = 475;
         let xPosition = 250;
         const spacing = 150;
 
@@ -187,7 +187,7 @@ export class EncounterScene extends Phaser.Scene{
 
             this.pokeballButtons[type] = buttonText;
 
-            this.add.text(xPosition, yPosition + 30, `Catch Rate: ${pokeballData.rate}x`)
+            this.add.text(xPosition, yPosition + 20, `Catch Rate: ${pokeballData.rate}x`)
                 .setStyle({fontSize: '12px', fontFamily: 'Arial', color: '#fff'})
                 .setOrigin(0.5);
 
@@ -195,7 +195,7 @@ export class EncounterScene extends Phaser.Scene{
 
             });
 
-            this.catchButton = this.add.text(400, 425, `Throw ${this.pokeballTypes[this.selectedPokeball].name}`)
+            this.catchButton = this.add.text(400, 525, `Throw ${this.pokeballTypes[this.selectedPokeball].name}`)
             .setStyle({fontSize: '20px', backgroundColor: "#008800", fontFamily: 'Arial', color: '#fff', padding: { x: 15, y: 8 }})
             .setOrigin(0.5)
             .setInteractive({ useHandCursor: true })

@@ -1,7 +1,10 @@
 import './styles/userMetaDataStyles.css'
 import RiveAnimation from './RiveAnimation';
+import { Coins } from 'lucide-react';
+import { useState } from 'react';
 
 export default function UserMetadataComponent() {
+    const username = localStorage.getItem("username");
     return (
         <div className = "user-data-instruction-container">
             <div className = "user-data-container">
@@ -21,7 +24,7 @@ export default function UserMetadataComponent() {
                         Welcome
                     </div>
                     <div className = "user-greeting-name">
-                        FutaBandit
+                        {username}
                     </div>
                     <div className = "user-greeting-note">
                         (P.S. Don't poke/click my eyes please!)
@@ -34,6 +37,10 @@ export default function UserMetadataComponent() {
                 <div className = "instruction-movement">
                     <img className = "arrow-keys" src = "./assets/arrow-keys.png"></img>
                     <p className = "movement-instruction-data">Move using arrow keys</p>
+                </div>
+                <div className = "instruction-gambling">
+                    <Coins color = "#ECDBBA" size={"32px"}/>
+                    <p className = "gamble-instruction-data">Each Pokemon reward is it's Bounty x Multiplier</p>
                 </div>
                 <div className = "instruction-catch">
                     <div className = "interaction-icon">

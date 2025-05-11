@@ -92,7 +92,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 15px;
+    overflow-y: scroll;
+    max-height: 200px;
 }   
 
 .user-instruction-container .instruction-header {
@@ -152,4 +154,31 @@
     font-family: "HelveticaNeueMedium";
     font-size: 0.8em;
     color: #ECDBBA;
-}   
+}
+
+.instruction-gambling {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.gamble-instruction-data {
+    font-family: "HelveticaNeueMedium";
+    font-size: 0.8em;
+    color: #ECDBBA;
+    text-align: center;
+}
+
+.user-instruction-container::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+.user-instruction-container::-webkit-scrollbar-thumb {
+background-color: #ECDBBA;
+border-radius: 3px;
+}
+  
+.user-instruction-container::-webkit-scrollbar-track {
+background: transparent;
+}
