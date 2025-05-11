@@ -30,6 +30,7 @@ export function PublicDisplay() {
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "#161616",
+            position: "relative"
             // marginTop: "50px"
         }}>
             <div className="inner" style = {{
@@ -71,6 +72,7 @@ export function PublicDisplay() {
                         <button onClick = {() => navigate('/auth')}>Go to signup</button> */}
                     </div>
             </div> 
+        <div className = "credit-thing">Multiplayer Pokemon-Based Gambling Game <br /> Developed by FutoBandit</div>
         </div>
     )
 }

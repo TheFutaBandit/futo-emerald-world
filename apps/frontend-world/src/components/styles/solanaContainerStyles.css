@@ -145,6 +145,54 @@
   .multibutton-container .wallet-text-main {
     text-align: center;
     font-size: 0.9em;
-    margin: 30px 5px;
-    word-break: break-all;
+    margin: 30px 14px;
+  }
+
+
+  /* handling gameboy */
+  .standby-container {
+    height: 600px;
+    width: 800px;
+    border: 1px solid #ecdbba28;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .warning-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    color: #ECDBBA;
+    font-family: "HelveticaNeueMedium";
+  }
+
+  .warning-1 {
+    font-size: 1em;
+    margin-top: -2px;
+  }
+
+  .warning-2 {
+    font-family: "HelveticaNeueThin";
+    font-size: 0.8em;
+  }
+
+  .warning-button {
+    background-color: transparent;
+    color: #ECDBBA;
+    font-family: "HelveticaNeueBlack";
+    font-size: 1em;
+    letter-spacing: 4;
+    border: 1px solid #ECDBBA;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100px;
+  }
+
+  .warning-button:hover {
+    background-color: #388e3c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }

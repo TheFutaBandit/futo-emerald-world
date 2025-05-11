@@ -37,6 +37,21 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: "PixelGame";
+    src: url('./fonts/PixelGame.otf') format('opentype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "PixelGameExtrude";
+    src: url('./fonts/PixelGameExtrude.otf') format('opentype');
+    font-display: swap;
+}
+
+
+
+
 .title-container {
     color: white;
     display: flex;
@@ -47,10 +62,11 @@
 }
 
 .title-container .top-title {
-    font-family: "HelveticaNeueBlack";
-    font-size: 2rem;
+    font-family: "PixelGame";
+    font-size: 4.6rem;
     padding: 0px;
     color: #ECDBBA;
+    line-height: 0.8;
 }
 
 .title-container .tag-line {
@@ -59,13 +75,14 @@
     padding: 0px;
     letter-spacing: 0.5px;
     color: #ecdbbabf;
+    margin-bottom: -10px;
     /* color: #20553ea0; */
 }
 
 
 
 .sexy_line { 
-    margin: 26px 0;
+    margin: 26px 0px 26px 0px;
     height: 0.7px;
     background: -webkit-gradient(linear, 0 0, 100% 0, from(#161616), to(#161616), color-stop(50%, #346751));
 }
@@ -81,7 +98,7 @@
     
 }
 
-input[type=text] {
+input[type=text], input[type=password] {
     background-color: #252424;
     border: 1px solid rgba(255, 255, 255, 0.112);
     padding: 5px 15px;
@@ -134,3 +151,14 @@ input[type=text]::placeholder {
     color: #346751;
 }
 
+
+
+.credit-thing {
+    font-family: "HelveticaNeueUltraLight";
+    color: #ECDBBA;
+    position: absolute;
+    letter-spacing: 1px;
+    bottom: 7%;
+    font-size: 0.8em;
+    text-align: center;
+}

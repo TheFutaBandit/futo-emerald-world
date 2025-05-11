@@ -25,7 +25,7 @@ export default function SignUpComponent() {
         }}>
             {err && <div>That's an error</div>}
             <div className = "title-container">
-                <div className = "top-title">FUTAVILLE</div>
+                <div className = "top-title">POKEVILLE</div>
                 <div className = "tag-line">Gambling In Nostalgia</div>
             </div>
             <div className ="sexy_line"></div>
@@ -35,7 +35,7 @@ export default function SignUpComponent() {
                         <input className = "formInput" type = "text" placeholder="Username" ref={usernameRef} disabled = {loading}></input>
                     </div>
                     <div className="password">
-                        <input className = "formInput" type = "text" placeholder="Password" ref={passwordRef} disabled = {loading}></input>
+                        <input className = "formInput" type = "password" placeholder="Password" ref={passwordRef} disabled = {loading}></input>
                     </div>
                 </div>
                 <div className = "title-form-submit">
