@@ -154,11 +154,39 @@ input[type=text]::placeholder {
 
 
 .credit-thing {
-    font-family: "HelveticaNeueUltraLight";
+    font-family: "HelveticaNeueThin";
     color: #ECDBBA;
     position: absolute;
     letter-spacing: 1px;
     bottom: 7%;
     font-size: 0.8em;
     text-align: center;
+}
+
+.blob {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, #90D1CA, #129990);
+    opacity: 0.15;
+    filter: blur(80px);
+    border-radius: 50%;
+    animation: float 20s ease-in-out infinite;
+}
+
+.blob-2 {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, #FBF3C1, #64E2B7);
+    opacity: 0.15;
+    filter: blur(80px);
+    border-radius: 50%;
+    animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%   { transform: translateY(0px) translateX(0px); }
+    50%  { transform: translateY(20px) translateX(10px); }
+    100% { transform: translateY(0px) translateX(0px); }
 }
