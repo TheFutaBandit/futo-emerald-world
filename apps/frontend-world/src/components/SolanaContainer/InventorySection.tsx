@@ -12,7 +12,7 @@ import '../styles/inventoryStyles.css'
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 
-import { Wallet } from "lucide-react";
+import { Wallet, Store} from "lucide-react";
 import { Backpack } from "lucide-react";
 
 const BACKEND_URL = "http://localhost:3000"
@@ -152,14 +152,14 @@ export function InventorySection() {
         };
     }, [id])
 
-    async function handleBuyPokeball() {
+    async function handleBuyPokeball(pokeballType: string) {
         if(!publicKey) {
             console.log("Wallet not connected");
             return;
         }
 
         try {
-            const result = await buyPokeballsFunction(10, 100, id);
+            const result = await buyPokeballsFunction(10, 100, id, pokeballType);
             if(result && result.success) {
                 console.log("Pokeballs bought successfully by");
                 setInventory(result.inventory);
@@ -204,24 +204,40 @@ export function InventorySection() {
                         </div>
                         <div className = "pokeball-row">
                             <div className = "pokeball-image"><img src = "./assets/images/new_pokeball.png"></img></div>
-                            {inventory.standardPokeball}x
+                            <div className = "pokeball-count">{inventory.standardPokeball}x</div>
                         </div>
                         <div className = "pokeball-row">
                             <div className = "pokeball-image"><img src = "./assets/images/greatball.png"></img></div>
-                            {inventory.greatPokeball}x
+                            <div className = "pokeball-count">{inventory.greatPokeball}x</div>
                         </div>
                         <div className = "pokeball-row">
                             <div className = "pokeball-image"><img src = "./assets/images/ultraball.png"></img></div>
-                            {inventory.ultraPokeball}x
+                            <div className = "pokeball-count">{inventory.ultraPokeball}x</div>
                         </div>
                     </div>
                 ) : (
                     <p style ={{color: "white", fontSize: "16px"}}>Loading inventory...</p>
                 )}
-                <div style = {{
-                    display: "flex"
-                }}>
-                    <button className = "buy-pokeball-button" onClick = {handleBuyPokeball} disabled = {loading}>Buy Pokeball (1000PKC)</button>
+                <div className ="sexy_line_inventory" style = {{marginBottom : "0px !important"}}></div>
+                <div className = "inventory-shop-section">
+                    <div className="shop-section-header">
+                        <Store size = "24px" strokeWidth={"1.5px"}/>
+                        <div style ={{transform: "translateY(1px)"}}>SHOP</div>
+                    </div>
+                    <div className = "shop-button-section">
+                        <div className = "shop-pokeball-row">
+                            <div className = "pokeball-image"><img src = "./assets/images/new_pokeball.png"></img></div>
+                            <button className = "buy-pokeball-button" onClick = {() => handleBuyPokeball("standard")} disabled = {loading}>Buy</button>
+                        </div>
+                        <div className = "shop-pokeball-row">
+                            <div className = "pokeball-image"><img src = "./assets/images/greatball.png"></img></div>
+                            <button className = "buy-pokeball-button" onClick = {() => handleBuyPokeball("great")} disabled = {loading}>Buy</button>
+                        </div>
+                        <div className = "shop-pokeball-row">
+                            <div className = "pokeball-image"><img src = "./assets/images/ultraball.png"></img></div>
+                            <button className = "buy-pokeball-button" onClick = {() => handleBuyPokeball("ultra")} disabled = {loading}>Buy</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
