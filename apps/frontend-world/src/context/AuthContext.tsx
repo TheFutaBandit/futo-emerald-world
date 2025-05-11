@@ -75,7 +75,7 @@ export default function AuthContextProvider({children} : propType) {
 
     return (
         <AuthContext.Provider value = {{...state, dispatch}}>
-            {children};
+            {children}  
         </AuthContext.Provider>
     )
 }

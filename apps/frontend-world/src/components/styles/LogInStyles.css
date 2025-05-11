@@ -43,13 +43,14 @@
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 1px;
 }
 
 .title-container .top-title {
     font-family: "HelveticaNeueBlack";
-    font-size: 1.8rem;
+    font-size: 2rem;
     padding: 0px;
+    color: #ECDBBA;
 }
 
 .title-container .tag-line {
@@ -57,16 +58,16 @@
     font-size: 1rem;
     padding: 0px;
     letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.786);
+    color: #ecdbbabf;
+    /* color: #20553ea0; */
 }
 
 
 
 .sexy_line { 
-    margin: 25px 0;
+    margin: 26px 0;
     height: 0.7px;
-    background: black;
-    background: -webkit-gradient(linear, 0 0, 100% 0, from(black), to(black), color-stop(25%, rgb(77, 77, 77)), color-stop(50%, white), color-stop(25%, rgb(77, 77, 77)));
+    background: -webkit-gradient(linear, 0 0, 100% 0, from(#161616), to(#161616), color-stop(50%, #346751));
 }
 
 .title-form {
@@ -82,7 +83,7 @@
 
 input[type=text] {
     background-color: #252424;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.112);
     padding: 5px 15px;
     border-radius: 10px;
     height: 45px;
@@ -111,7 +112,7 @@ input[type=text]::placeholder {
 .title-form .submit-button {
     padding: 0.5px 15px;
     height: 45px;
-    background: #BD142E;
+    background: #346751;
     color: white;
     border: none;
     border-radius: 10px;
@@ -130,6 +131,6 @@ input[type=text]::placeholder {
 .navigate-link {
     font-family: "HelveticaNeueThin";
     text-decoration: none;
-    color: #BD142E;
+    color: #346751;
 }
 

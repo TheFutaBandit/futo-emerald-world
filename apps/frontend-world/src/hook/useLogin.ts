@@ -27,12 +27,15 @@ export const useLogin = () : useLoginResponse => {
     const logIn = async (username : string, password : string) => {
         setLoading(true);
         setErr(null);
+        console.log({
+            username: username,
+            password: password
+        })
 
         try {
             const response = await axios.post<loginReponse>(`${BACKEND_URL}/api/v1/auth/login`, {
                 username,
                 password,
-                type: "User",
             })
             const responseData = await response.data;
             dispatch({

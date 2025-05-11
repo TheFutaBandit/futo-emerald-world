@@ -19,13 +19,14 @@ export default function SignUpComponent() {
 
     return (
         <div className="signup-container" style={{
-            
-            flexGrow: "1"
+            flexGrow: "1",
+            display: "flex",
+            flexDirection: "column",
         }}>
             {err && <div>That's an error</div>}
             <div className = "title-container">
-                <div className = "top-title">PLACEHOLDER</div>
-                <div className = "tag-line">Gambling with Nostalgia</div>
+                <div className = "top-title">FUTAVILLE</div>
+                <div className = "tag-line">Gambling In Nostalgia</div>
             </div>
             <div className ="sexy_line"></div>
             <div className = "title-form">

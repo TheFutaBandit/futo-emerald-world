@@ -1,4 +1,5 @@
-const axios2 = require('axios');
+const axios2 = require('axios')
+
 
 const BACKEND_URL = "http://localhost:3000"
   

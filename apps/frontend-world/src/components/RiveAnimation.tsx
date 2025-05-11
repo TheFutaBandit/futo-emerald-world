@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useRive, Layout, Fit, Alignment, useStateMachineInput } from '@rive-app/react-canvas';
 
 interface RiveAnimationProps {
@@ -7,7 +7,7 @@ interface RiveAnimationProps {
   height?: number;
   stateMachine?: string;
   artboard?: string;
-  alwaysTrack?: boolean; // Option to always track, even outside canvas
+  alwaysTrack?: boolean;
 }
 
 const RiveAnimation: React.FC<RiveAnimationProps> = ({
@@ -16,8 +16,10 @@ const RiveAnimation: React.FC<RiveAnimationProps> = ({
   height = 300,
   stateMachine = "State Machine 1",
   artboard,
-  alwaysTrack = true, // Default to always tracking
+  alwaysTrack = true,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
   const { RiveComponent, rive } = useRive({
     src,
     stateMachines: stateMachine ? [stateMachine] : undefined,
@@ -28,47 +30,42 @@ const RiveAnimation: React.FC<RiveAnimationProps> = ({
     }),
     autoplay: true,
   });
-
-  // Get the "isTracking" input
-  const isTrackingInput = useStateMachineInput(rive, stateMachine, "istracking");
   
-  // Effect to enable tracking as soon as rive loads
+  // Get the lookX and lookY inputs if they exist
+  const lookX = useStateMachineInput(rive, stateMachine, 'lookX');
+  const lookY = useStateMachineInput(rive, stateMachine, 'lookY');
+  
   useEffect(() => {
-    if (isTrackingInput && alwaysTrack) {
-      // Enable tracking immediately and keep it enabled
-      isTrackingInput.value = true;
-      console.log("Enabled cursor tracking");
+    if (alwaysTrack && lookX && lookY) {
+      // Function to handle mouse movement anywhere on the page
+      const handleMouseMove = (e: MouseEvent) => {
+        if (!containerRef.current) return;
+        
+        // Get container position and dimensions
+        const rect = containerRef.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        // Calculate normalized position relative to center (-1 to 1)
+        const normalizedX = (e.clientX - centerX) / (window.innerWidth / 2);
+        const normalizedY = (e.clientY - centerY) / (window.innerHeight / 2);
+        
+        // Set the inputs with clamped values between -1 and 1
+        lookX.value = Math.max(-1, Math.min(1, normalizedX));
+        lookY.value = Math.max(-1, Math.min(1, normalizedY));
+      };
+      
+      // Add global mouse move listener
+      document.addEventListener('mousemove', handleMouseMove);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+      };
     }
-  }, [isTrackingInput, alwaysTrack]);
-
-  // Optional: Add mouse enter/leave handlers if you want tracking only when over the canvas
-  useEffect(() => {
-    if (!isTrackingInput || alwaysTrack) return;
-    
-    const container = document.querySelector('.rive-animation-container');
-    if (!container) return;
-    
-    const handleMouseEnter = () => {
-      isTrackingInput.value = true;
-      console.log("Mouse entered - tracking enabled");
-    };
-    
-    const handleMouseLeave = () => {
-      isTrackingInput.value = false;
-      console.log("Mouse left - tracking disabled");
-    };
-    
-    container.addEventListener('mouseenter', handleMouseEnter);
-    container.addEventListener('mouseleave', handleMouseLeave);
-    
-    return () => {
-      container.removeEventListener('mouseenter', handleMouseEnter);
-      container.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, [isTrackingInput, alwaysTrack]);
-
+  }, [rive, lookX, lookY, alwaysTrack]);
+  
   return (
-    <div className="rive-animation-container" style={{ width, height }}>
+    <div className="rive-animation-container" ref={containerRef} style={{ width, height }}>
       <RiveComponent />
     </div>
   );

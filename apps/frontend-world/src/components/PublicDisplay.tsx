@@ -6,7 +6,7 @@ import RiveAnimation from './RiveAnimation';
 
 export function PublicDisplay() {
     const navigate = useNavigate();
-    const [log, setLog] = useState('signup');;
+    const [log, setLog] = useState('signup');
     const cardRef = useRef<HTMLDivElement>(null);
 
     function triggerAnimation() {
@@ -29,10 +29,12 @@ export function PublicDisplay() {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "#0E0C0E"
+            backgroundColor: "#161616",
+            // marginTop: "50px"
         }}>
             <div className="inner" style = {{
-                position: "relative"
+                position: "relative",
+                marginTop: "100px"
             }}>
                     <div style={{ 
                         position: 'absolute',
