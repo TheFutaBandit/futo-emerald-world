@@ -1,13 +1,47 @@
 import './styles/userMetaDataStyles.css'
+import RiveAnimation from './RiveAnimation';
 
 export default function UserMetadataComponent() {
     return (
-        <>
+        <div className = "user-data-instruction-container">
             <div className = "user-data-container">
                 <h1>PROFILE</h1>
-                <div className ="sexy_line_inventory"></div>
+                <div className ="sexy_line_profile"></div>
+                <div className = "user-profile-picture-container">
+                    <RiveAnimation 
+                                src="/rive_assets/gurl.riv" 
+                                width={300} 
+                                height={300}
+                                stateMachine="State Machine 1"
+                                alwaysTrack={true}
+                    />
+                </div>
+                <div className = "user-profile-information">
+                    <div className = "user-greeting">
+                        Welcome
+                    </div>
+                    <div className = "user-greeting-name">
+                        FutaBandit
+                    </div>
+                    <div className = "user-greeting-note">
+                        (P.S. Don't poke/click my eyes please!)
+                    </div>
+                </div>
             </div>
-            <div className = "user-instruction-container"></div>
-        </>
+            <div className ="sexy_line_profile"></div>
+            <div className = "user-instruction-container">
+                <div className = "instruction-header">INSTRUCTIONS</div>
+                <div className = "instruction-movement">
+                    <img className = "arrow-keys" src = "./assets/arrow-keys.png"></img>
+                    <p className = "movement-instruction-data">Move using arrow keys</p>
+                </div>
+                <div className = "instruction-catch">
+                    <div className = "interaction-icon">
+                        <div className = "e-icon">E</div>
+                    </div>
+                    <p className = "catch-instruction-data">'E' to interact with pokemon</p>
+                </div>
+            </div>
+        </div>
     )
 }

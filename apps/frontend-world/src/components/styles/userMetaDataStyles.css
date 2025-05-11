@@ -1,9 +1,155 @@
+@font-face {
+    font-family: "HelveticaNeueBold";
+    src: url('./fonts/HelveticaNeueBold.otf') format('opentype');
+    font-display: swap;
+}
+
+.sexy_line_profile { 
+    margin: 2px 0px;
+    height: 0.7px; 
+    width: 100%;
+    background: -webkit-gradient(linear, 0 0, 100% 0, from(#161616), to(#161616), color-stop(50%, #ecdbba));
+}
+
 .user-metadata-container {
     display: flex;
     border: 1px solid #ecdbba21;
     height: 600px;
     width: 250px;
+    align-items: center;
     flex-direction: column;
-    padding: 20px 0px;
 }
 
+.user-data-instruction-container {
+    max-width: 193px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    gap: 5px;
+}
+
+.user-data-container h1 {
+    font-family: "HelveticaNeueBlack";
+    color: #ECDBBA;
+}
+
+.user-profile-picture-container {
+   position: relative;
+   max-width: 193px;
+   height: 193px;
+   overflow: hidden;
+   border-radius: 50%;
+   margin: 0 auto;
+   border: 2px solid #ECDBBA;
+   margin-top: 10px;
+}
+
+.user-profile-picture-container canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* min-width: 100%;
+    min-height: 100%; */
+}
+
+.user-profile-information {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "HelveticaNeueBold";
+    color: #ECDBBA;
+    gap: 15px;
+}
+.user-profile-information .user-greeting {
+    font-size: 1.8em;
+    line-height: 0;
+}   
+
+.user-profile-information .user-greeting-name {
+    color: #C84B31;
+    font-size: 1em;
+}   
+
+.user-profile-information .user-greeting-note {
+    font-family: "HelveticaNeueThin";
+    font-size: 0.7em;
+    letter-spacing: 0.3px;
+    line-height: 0;
+    margin-top: -5px;
+}   
+
+.user-instruction-container {
+    padding: 10px 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}   
+
+.user-instruction-container .instruction-header {
+    font-family: "HelveticaNeueBold";
+    color: #ECDBBA;
+}
+
+.arrow-keys { 
+    width: 50px;
+    height: auto;
+}
+
+.user-instruction-container .instruction-movement {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.instruction-movement .movement-instruction-data {
+    font-family: "HelveticaNeueMedium";
+    font-size: 0.8em;
+    color: #ECDBBA;
+}
+
+.user-instruction-container .instruction-catch{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.interaction-icon {
+    display: flex;
+    width: 25px;
+    height: 25px;
+    border: 2px solid #ECDBBA;
+    justify-content: center;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.interaction-icon .e-icon{
+    font-family: "HelveticaNeueBold";
+    color: #ECDBBA;
+    font-size: 1em;
+}
+
+.instruction-catch {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.instruction-catch .catch-instruction-data {
+    font-family: "HelveticaNeueMedium";
+    font-size: 0.8em;
+    color: #ECDBBA;
+}   
