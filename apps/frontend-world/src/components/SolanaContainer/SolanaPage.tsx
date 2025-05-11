@@ -18,6 +18,7 @@ export function SolanaPage() {
 
     useEffect(() => {
         if(publicKey){
+            EventBus.storeData('user-wallet', { publicKey: publicKey });
             EventBus.emit('user-wallet', {publicKey: publicKey});
         }
     }, [publicKey])

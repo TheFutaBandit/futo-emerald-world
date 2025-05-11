@@ -111,6 +111,22 @@ export class EncounterScene extends Phaser.Scene{
         this.selectedPokeball = "standard";
         this.pokeballButtons = {};
 
+        if (EventBus.hasData('inventory')) {
+            const cachedInventory = EventBus.getData('inventory');
+            console.log("Using cached inventory:", cachedInventory);
+            if (cachedInventory) {
+                this.pokeballTypes.standard.count = cachedInventory.standardPokeball;
+                this.pokeballTypes.great.count = cachedInventory.greatPokeball;
+                this.pokeballTypes.ultra.count = cachedInventory.ultraPokeball;
+            }
+        }
+
+        if (EventBus.hasData('user-wallet')) {
+            const cachedWallet = EventBus.getData('user-wallet');
+            console.log("Using cached wallet:", cachedWallet.publicKey);
+            this.userWallet = cachedWallet.publicKey;
+        }
+
         console.log("hey so am I even running")
         EventBus.emit('get-inventory-for-scene');
         EventBus.on('receive-inventory', (inventory: Inventory) => {
@@ -126,12 +142,25 @@ export class EncounterScene extends Phaser.Scene{
             }
         });
 
+        EventBus.on('inventory-updated', (inventory: Inventory) => {
+            console.log("Inventory updated, refreshing pokeball counts:", inventory);
+            if (inventory) {
+                this.pokeballTypes.standard.count = inventory.standardPokeball;
+                this.pokeballTypes.great.count = inventory.greatPokeball;
+                this.pokeballTypes.ultra.count = inventory.ultraPokeball;
+                
+                if (this.pokeballButtons) {
+                    this.updatePokeballButtonStates();
+                }
+            }
+        });
+
         
 
-        EventBus.on('user-wallet', (data : { publicKey : PublicKey}) => {
-            console.log(data.publicKey);
+        EventBus.on('user-wallet', (data: { publicKey: PublicKey }) => {
+            console.log("Received wallet update:", data.publicKey);
             this.userWallet = data.publicKey;
-        })
+        });
     }
 
     preload() {
@@ -276,7 +305,12 @@ export class EncounterScene extends Phaser.Scene{
 
         this.catchButton.disableInteractive();
 
-        EventBus.emit('catch-attempt', { pokeballType: this.selectedPokeball });
+        const pokeballType = this.selectedPokeball;
+
+        // EventBus.emit('catch-attempt', { pokeballType: this.selectedPokeball });
+        EventBus.emit('pokeball-used', { 
+            pokeballType: pokeballType 
+        });
 
         this.pokeballTypes[this.selectedPokeball].count--;
         this.updatePokeballButtonStates();
@@ -473,6 +507,8 @@ export class EncounterScene extends Phaser.Scene{
         } else {
             this.scene.wake('Modular-Scene');
         }
+        EventBus.removeListener('inventory-updated');
+        EventBus.removeListener('receive-inventory');
         this.scene.stop();
 
         // if(pokemonCaught && this.pokemon) {

@@ -43,43 +43,28 @@ export function InventorySection() {
     let { id } = jwtDecode<customJwtPayload>(token!);
 
 
+    // In InventorySection.tsx
     useEffect(() => {
-        
-
-        const catchAttemptCallback = async () => {
-            try {
-                
-                const updateResponse = await axios.post(`${BACKEND_URL}/api/v1/pokeball/update`, {
-                    userId: id,
-                    pokeballType: "standard",
-                    usedCount: 1
-                })
-
-                
-
-                if(updateResponse.data.success) {
-                    setInventory(updateResponse.data.inventory);
-                } else {
-                    console.error("bad request")
-                }
-            } catch(err: any) {
-                throw new Error(err);
-            }
+        if (inventory) {
+            // Store the inventory in the EventBus
+            EventBus.storeData('inventory', inventory);
         }
         
-        EventBus.addListener('catch-attempt', catchAttemptCallback);
-
-        EventBus.on('get-inventory-for-scene', () => {
+        const onGetInventory = () => {
             console.log("Sending inventory to game scene:", inventory);
-            // Send the inventory object directly, not wrapped in another object
             EventBus.emit('receive-inventory', inventory);
-        });
+        };
+        
+        EventBus.on('get-inventory-for-scene', onGetInventory);
 
+        EventBus.storeData('inventory', inventory);
+
+        EventBus.emit('inventory-updated', inventory);
+        
         return () => {
-            EventBus.removeListener('catch-attempt', catchAttemptCallback);
-            EventBus.removeListener('get-inventory-for-scene')
-        }
-    }, [inventory])
+            EventBus.removeListener('get-inventory-for-scene', onGetInventory);
+        };
+    }, [inventory]);
 
     useEffect(() => {
         if(id) {
@@ -131,6 +116,41 @@ export function InventorySection() {
             return null;
         }
     }
+
+
+    useEffect(() => {
+    // Listen for pokeball usage from the game scene
+    const onPokeballUsed = async (data: { pokeballType: string }) => {
+        console.log(`Pokeball used in game: ${data.pokeballType}`);
+        
+        try {
+            // Call the API to update the inventory in the backend
+            const updateResponse = await axios.post(`${BACKEND_URL}/api/v1/pokeball/update`, {
+                userId: id,
+                pokeballType: data.pokeballType,
+                usedCount: 1
+            });
+
+            if (updateResponse.data.success) {
+                // Update the local inventory state
+                setInventory(updateResponse.data.inventory);
+                
+                // Update the cached inventory in EventBus
+                EventBus.storeData('inventory', updateResponse.data.inventory);
+            } else {
+                console.error("Failed to update inventory:", updateResponse.data);
+            }
+        } catch (err: any) {
+            console.error("Error updating inventory after pokeball use:", err);
+        }
+    };
+    
+    EventBus.on('pokeball-used', onPokeballUsed);
+    
+        return () => {
+            EventBus.removeListener('pokeball-used', onPokeballUsed);
+        };
+    }, [id])
 
     async function handleBuyPokeball() {
         if(!publicKey) {

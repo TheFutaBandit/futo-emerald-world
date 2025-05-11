@@ -36,7 +36,7 @@ export default function useBuyPokeballs() {
     const MINT_ADDRESS = new PublicKey('mnteCTzzYLmuu4pV26oLrrm1rv4zjEpufRv2DsuguEb');
 
     
-    const buyPokeballsFunction = async(amount: number = 10, cost: number = 100, userId: string) => {
+    const buyPokeballsFunction = async(amount: number = 10, cost: number = 100, userId: string, type : string = "standard") => {
         if(!publicKey) {
             setErr('Wallet not connected');
             return { success: false, error: 'Wallet not connected' };
@@ -115,7 +115,7 @@ export default function useBuyPokeballs() {
                 console.log("sending request to backend")
                 const purchaseResponse = await axios.post(`${BACKEND_URL}/api/v1/pokeball/purchase`, {
                     transactionSignature: tx,
-                    pokeballType: "standard",
+                    pokeballType: type,
                     quantity: amount,
                     userId
                 });
@@ -125,7 +125,7 @@ export default function useBuyPokeballs() {
                 if(success) {
                     setTx("tx");
                     const updatedInventory = purchaseResponse.data.inventory;
-                    console.log(`Backend updated, purchased ${amount} standard pokeballs!`);
+                    console.log(`Backend updated, purchased ${amount} ${type} pokeballs!`);
                     return { 
                         success: true, 
                         signature: "tx", 
