@@ -3,8 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import useAuthContext from "./useAuthContext";
 
-const BACKEND_URL = process.env.BACKEND_URL;
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://futo-emerald-world.onrender.com";
 
 interface airdropTokenResponse {
     requestAirdropFunction : () => Promise<any>,

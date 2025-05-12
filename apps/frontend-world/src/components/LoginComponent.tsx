@@ -2,8 +2,7 @@ import { useRef } from "react";
 import { useLogin } from "../hook/useLogin";
 import './styles/LogInStyles.css'
 
-const BACKEND_URL = process.env.BACKEND_URL || "https://futo-emerald-world.onrender.com";
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://futo-emerald-world.onrender.com";
 
 interface loginResponse {
     token: string

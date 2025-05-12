@@ -15,7 +15,7 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { Wallet, Store} from "lucide-react";
 import { Backpack } from "lucide-react";
 
-const BACKEND_URL = process.env.BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://futo-emerald-world.onrender.com";
 
 interface customJwtPayload {
     id: string,

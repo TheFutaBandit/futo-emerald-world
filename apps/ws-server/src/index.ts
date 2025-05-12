@@ -1,6 +1,8 @@
 import { WebSocket, WebSocketServer } from 'ws';
 
-const wss = new WebSocketServer({ port: 3452 });
+const PORT = process.env.PORT || 3452;
+
+const wss = new WebSocketServer({ port: parseInt(PORT.toString()) });
 
 interface Player {
     id: string,
