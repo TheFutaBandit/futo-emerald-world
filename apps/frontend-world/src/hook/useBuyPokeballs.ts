@@ -22,7 +22,8 @@ import {
 } from "@solana/web3.js";
 import axios from 'axios';
 
-const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = process.env.BACKEND_URL;
+
 
 export default function useBuyPokeballs() {
     const { connection } = useConnection();

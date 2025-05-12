@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useLogin } from "../hook/useLogin";
 import './styles/LogInStyles.css'
 
-const BACKEND_URL = 'http://localhost:3000'
+const BACKEND_URL = process.env.BACKEND_URL || "https://futo-emerald-world.onrender.com";
 
 
 interface loginResponse {

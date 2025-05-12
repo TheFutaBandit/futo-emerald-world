@@ -3,7 +3,8 @@ import axios from "axios";
 import { useState } from "react";
 import useAuthContext from "./useAuthContext";
 
-const BACKEND_URL = 'http://localhost:3000'
+const BACKEND_URL = process.env.BACKEND_URL;
+
 
 interface airdropTokenResponse {
     requestAirdropFunction : () => Promise<any>,

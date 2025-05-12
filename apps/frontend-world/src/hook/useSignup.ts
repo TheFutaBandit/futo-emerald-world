@@ -3,7 +3,8 @@ import axios, { AxiosError } from "axios";
 
 import useAuthContext from "./useAuthContext";
 
-const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = process.env.BACKEND_URL || "https://futo-emerald-world.onrender.com";
+
 
 interface signupResponse {
     token: string
