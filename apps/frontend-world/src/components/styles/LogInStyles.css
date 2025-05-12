@@ -37,18 +37,6 @@
     font-display: swap;
 }
 
-@font-face {
-    font-family: "PixelGame";
-    src: url('./fonts/PixelGame.otf') format('opentype');
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "PixelGameExtrude";
-    src: url('./fonts/PixelGameExtrude.otf') format('opentype');
-    font-display: swap;
-}
-
 
 
 
@@ -62,11 +50,11 @@
 }
 
 .title-container .top-title {
-    font-family: "PixelGame";
-    font-size: 4.6rem;
-    padding: 0px;
+    font-family: "HelveticaNeueBlack";
     color: #ECDBBA;
-    line-height: 0.8;
+    font-family: "HelveticaNeueBlack";
+    font-size: 1.8rem;
+    padding: 0px;
 }
 
 .title-container .tag-line {
@@ -163,27 +151,6 @@ input[type=text]::placeholder {
     text-align: center;
 }
 
-.blob {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, #90D1CA, #129990);
-    opacity: 0.15;
-    filter: blur(80px);
-    border-radius: 50%;
-    animation: float 20s ease-in-out infinite;
-}
-
-.blob-2 {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, #FBF3C1, #64E2B7);
-    opacity: 0.15;
-    filter: blur(80px);
-    border-radius: 50%;
-    animation: float 20s ease-in-out infinite;
-}
 
 @keyframes float {
     0%   { transform: translateY(0px) translateX(0px); }

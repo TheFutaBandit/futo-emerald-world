@@ -73,14 +73,6 @@ export function PublicDisplay() {
                     </div>
             </div> 
         <div className = "credit-thing">Multiplayer Pokemon-Based Gambling Game <br /> Developed by FutoBandit</div>
-        <div className = "blob" style = {{
-            top: "15%",
-            left: "10%"
-        }}></div>
-        <div className = "blob-2" style = {{
-            bottom: "10%",
-            right: "20%"
-        }}></div>
         </div>
     )
 }
