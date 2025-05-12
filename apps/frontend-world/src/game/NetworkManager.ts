@@ -33,7 +33,7 @@ export class NetworkManager {
         }
 
         console.log("Connecting to WebSocket server...");
-        this.socket = new WebSocket("ws://localhost:3452");
+        this.socket = new WebSocket("https://futo-emerald-world-websocket.onrender.com");
 
         this.socket.onopen = () => {
             console.log("WebSocket connection established");

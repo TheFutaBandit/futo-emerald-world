@@ -72,7 +72,7 @@ export function PublicDisplay() {
                         <button onClick = {() => navigate('/auth')}>Go to signup</button> */}
                     </div>
             </div> 
-        <div className = "credit-thing">Multiplayer Pokemon-Based Gambling Game <br /> Developed by FutoBandit</div>
+        <div className = "credit-thing">Multiplayer Pokemon-Based Solana Gambling Game <br /> Developed by FutoBandit</div>
         </div>
     )
 }
