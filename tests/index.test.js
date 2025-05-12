@@ -1,7 +1,7 @@
 const axios2 = require('axios')
 
 
-const BACKEND_URL = "http://localhost:3000"
+const BACKEND_URL = "https://futo-emerald-world.onrender.com"
   
 const axios = {
     post: async (...args) => {
