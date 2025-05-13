@@ -1,5 +1,5 @@
 import { transfer } from "@solana/spl-token";
-import { hash } from "bcrypt";
+import { hash } from "bcryptjs";
 import { Request, Response } from "express";
 import rewardTokens from "./rewardToken.service.js";
 
