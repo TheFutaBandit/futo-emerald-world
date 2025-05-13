@@ -38,6 +38,10 @@ function reducer(state : state, action : action) {
     switch (action.type) {
         case(SignLog.LogIn) : {
             const { token } = action.payload;
+            if (typeof token !== 'string') {
+                console.warn("Invalid token passed to reducer", token);
+                return state;
+            }
             const jwt_payload = jwtDecode(token) as jwt_payload;
             const userId = jwt_payload.userId;
             const username = jwt_payload.username;
@@ -48,6 +52,10 @@ function reducer(state : state, action : action) {
         };
         case(SignLog.SignUp) : {
             const { token } = action.payload;
+            if (typeof token !== 'string') {
+                console.warn("Invalid token passed to reducer", token);
+                return state;
+              }
             const jwt_payload = jwtDecode(token) as jwt_payload;
             console.log(jwt_payload);
             const userId = jwt_payload.userId;
@@ -66,7 +74,7 @@ function reducer(state : state, action : action) {
 
 export default function AuthContextProvider({children} : propType) {
     const [state, dispatch] = useReducer(reducer, {
-        token: ''
+        token: null
     })
 
     useEffect(() => {

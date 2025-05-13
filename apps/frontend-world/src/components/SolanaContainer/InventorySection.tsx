@@ -28,6 +28,8 @@ interface Inventory {
     ultraPokeball: number;
 }
 
+let id: string | null = null;
+
 
 
 export function InventorySection() {
@@ -40,7 +42,15 @@ export function InventorySection() {
 
     const { token } = useAuthContext();
 
-    let { id } = jwtDecode<customJwtPayload>(token!);
+    if (typeof token === 'string') {
+        try {
+          const decoded = jwtDecode<customJwtPayload>(token);
+          id = decoded.id;
+        } catch (err) {
+          console.error("Failed to decode token:", err);
+          id = null;
+        }
+      }
 
 
     // In InventorySection.tsx
@@ -155,6 +165,11 @@ export function InventorySection() {
     async function handleBuyPokeball(pokeballType: string) {
         if(!publicKey) {
             console.log("Wallet not connected");
+            return;
+        }
+
+        if (!id) {
+            console.log("User ID not available");
             return;
         }
 
