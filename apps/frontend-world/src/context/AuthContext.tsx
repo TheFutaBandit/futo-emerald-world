@@ -56,15 +56,18 @@ function reducer(state : state, action : action) {
                 console.warn("Invalid token passed to reducer", token);
                 return state;
               }
-            const jwt_payload = jwtDecode(token) as jwt_payload;
-            console.log(jwt_payload);
-            const userId = jwt_payload.userId;
-            const username = jwt_payload.username;
-            localStorage.setItem("token", token);
-            localStorage.setItem("userId", userId);
-            localStorage.setItem("username", username);
-            console.log({...state, token});
-            return {...state, token};  
+              try {
+                const jwt_payload = jwtDecode(token) as jwt_payload;
+                const userId = jwt_payload.userId;
+                const username = jwt_payload.username;
+                localStorage.setItem("token", token);
+                localStorage.setItem("userId", userId);
+                localStorage.setItem("username", username);
+                return { ...state, token };
+              } catch (err) {
+                console.error("Failed to decode token in reducer:", err);
+                return state;
+              } 
         };  
         default : {
             return state;
@@ -78,16 +81,12 @@ export default function AuthContextProvider({children} : propType) {
     })
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if(token) {
-            console.log('about to dispatch');
-            dispatch({
-                type: 'log-in',
-                payload: {
-                    token
-                }
-            })
-        }
+        const token = localStorage.getItem("token");
+if (typeof token === 'string') {
+  dispatch({ type: SignLog.LogIn, payload: { token } });
+} else {
+  console.warn("No valid token found at init");
+}
     }, [])
 
     return (
