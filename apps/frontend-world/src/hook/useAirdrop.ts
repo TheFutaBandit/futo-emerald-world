@@ -3,8 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import useAuthContext from "./useAuthContext";
 
-const BACKEND_URL = "http://159.89.162.31/api";
-
+const BACKEND_URL = "http://159.89.162.31";
 interface airdropTokenResponse {
     requestAirdropFunction : () => Promise<any>,
     loading: boolean,

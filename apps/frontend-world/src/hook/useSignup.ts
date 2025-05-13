@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 
 import useAuthContext from "./useAuthContext";
 
-const BACKEND_URL = "http://159.89.162.31/api";
+const BACKEND_URL = "http://159.89.162.31";
 
 interface signupResponse {
     token: string

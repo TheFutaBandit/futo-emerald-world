@@ -3,8 +3,7 @@ import { EventBus } from "../EventBus";
 import { Wallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 
-const BACKEND_URL = "http://159.89.162.31/api";
-
+const BACKEND_URL = "http://159.89.162.31";
 interface prevPosition {
     x: number, 
     y: number
