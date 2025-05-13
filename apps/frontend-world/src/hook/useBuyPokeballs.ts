@@ -22,7 +22,7 @@ import {
 } from "@solana/web3.js";
 import axios from 'axios';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://futo-emerald-world.onrender.com";
+const BACKEND_URL = "http://159.89.162.31/api";
 
 export default function useBuyPokeballs() {
     const { connection } = useConnection();

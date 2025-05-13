@@ -1,7 +1,7 @@
 const axios2 = require('axios')
 
 
-const BACKEND_URL = "https://futo-emerald-world.onrender.com"
+const BACKEND_URL = "http://159.89.162.31/api"
   
 const axios = {
     post: async (...args) => {

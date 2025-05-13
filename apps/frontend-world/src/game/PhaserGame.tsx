@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
 import StartGame from './main';
 import { EventBus } from './EventBus';
 
-const WEBSOCKET_URL = "ws://localhost:3000";
+const WEBSOCKET_URL = "ws://159.89.162.31/socket";
 
 export interface IRefPhaserGame
 {

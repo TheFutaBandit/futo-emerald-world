@@ -3,8 +3,7 @@ import { EventBus } from "../EventBus";
 import { Wallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://futo-emerald-world.onrender.com";
-
+const BACKEND_URL = "http://159.89.162.31/api";
 
 interface prevPosition {
     x: number, 

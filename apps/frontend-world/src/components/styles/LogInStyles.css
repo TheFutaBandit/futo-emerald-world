@@ -5,35 +5,35 @@
 
 @font-face {
     font-family: "Acma-Light";
-    src: url('./assets/fonts/PPAcma-Light.otf');
+    src: url('/assets/fonts/PPAcma-Light.otf');
 }
 
 @font-face {
     font-family: "Acma-Thin";
-    src: url('./assets/fonts/PPAcma-Thin.otf');
+    src: url('/assets/fonts/PPAcma-Thin.otf');
 }
 
 @font-face {
     font-family: "HelveticaNeueBlack";
-    src: url('./fonts/HelveticaNeueBlack.otf') format('opentype');
+    src: url('/fonts/HelveticaNeueBlack.otf') format('opentype');
     font-display: swap;
 }
 
 @font-face {
     font-family: "HelveticaNeueMedium";
-    src: url('./fonts/HelveticaNeueMedium.otf') format('opentype');
+    src: url('/fonts/HelveticaNeueMedium.otf') format('opentype');
     font-display: swap;
 }
 
 @font-face {
     font-family: "HelveticaNeueThin";
-    src: url('./fonts/HelveticaNeueThin.otf') format('opentype');
+    src: url('/fonts/HelveticaNeueThin.otf') format('opentype');
     font-display: swap;
 }
 
 @font-face {
     font-family: "HelveticaNeueUltraLight";
-    src: url('./fonts/HelveticaNeueUltraLight.otf') format('opentype');
+    src: url('/fonts/HelveticaNeueUltraLight.otf') format('opentype');
     font-display: swap;
 }
 
