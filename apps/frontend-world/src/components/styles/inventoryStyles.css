@@ -104,7 +104,7 @@
 }
 
 .Pokeball-Section .pokeball-section-header {
-    font-family: "HelveticaNeueBold";
+    font-family: "HelveticaNeueMedium";
     display: flex;
     align-items: center;
     justify-content: center;
@@ -130,7 +130,7 @@
 }
 
 .shop-section-header {
-    font-family: "HelveticaNeueBold";
+    font-family: "HelveticaNeueMedium";
     display: flex;
     align-items: center;
     justify-content: center;
