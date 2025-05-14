@@ -22,7 +22,7 @@ import {
 } from "@solana/web3.js";
 import axios from 'axios';
 
-const BACKEND_URL = "http://143.110.188.87";
+const BACKEND_URL = "https://143.110.188.87";
 export default function useBuyPokeballs() {
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
