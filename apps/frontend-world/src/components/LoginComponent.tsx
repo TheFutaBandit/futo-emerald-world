@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useLogin } from "../hook/useLogin";
 import './styles/LogInStyles.css'
 
-const BACKEND_URL = "https://143.110.188.87";
+const BACKEND_URL = "https://futoisland.com";
 interface loginResponse {
     token: string
 }

@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 
 import useAuthContext from "./useAuthContext";
 
-const BACKEND_URL = "https://143.110.188.87";
+const BACKEND_URL = "https://futoisland.com";
 
 interface signupResponse {
     token: string

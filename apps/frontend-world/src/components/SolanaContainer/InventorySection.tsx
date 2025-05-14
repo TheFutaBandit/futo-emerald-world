@@ -15,7 +15,7 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { Wallet, Store} from "lucide-react";
 import { Backpack } from "lucide-react";
 
-const BACKEND_URL = "https://143.110.188.87";
+const BACKEND_URL = "https://futoisland.com";
 
 interface customJwtPayload {
     id: string,
