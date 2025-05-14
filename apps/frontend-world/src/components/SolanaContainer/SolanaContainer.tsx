@@ -4,9 +4,7 @@ import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { 
   PhantomWalletAdapter, 
   SolflareWalletAdapter,
-  BackpackWalletAdapter,
-  CoinbaseWalletAdapter,
-  BraveWalletAdapter
+  // Only include adapters that are definitely available in your package
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import { useMemo, useEffect } from 'react';
@@ -50,10 +48,7 @@ export default function SolanaContainer() {
     () => {
       const adapters = [
         new PhantomWalletAdapter({ network }),
-        new SolflareWalletAdapter({ network }),
-        new BackpackWalletAdapter(),
-        new CoinbaseWalletAdapter(),
-        new BraveWalletAdapter()
+        new SolflareWalletAdapter({ network })
       ];
       
       console.log("Available wallet adapters:", adapters.map(a => a.name));
