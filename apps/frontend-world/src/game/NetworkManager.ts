@@ -33,7 +33,7 @@ export class NetworkManager {
         }
 
         console.log("Connecting to WebSocket server...");
-        this.socket = new WebSocket("ws://159.89.162.31/socket");
+        this.socket = new WebSocket("ws://143.110.188.87/ws");
 
         this.socket.onopen = () => {
             console.log("WebSocket connection established");
