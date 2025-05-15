@@ -1,84 +1,168 @@
-# Turborepo starter
+# PokéVille: A Pokémon-Inspired Solana Gambling Game
 
-This Turborepo starter is maintained by the Turborepo core team.
+PokéVille is a multiplayer Pokémon-inspired web application where players can explore a 2D world, encounter and catch rare Pokémon using different types of Pokéballs, and earn rewards on the Solana blockchain. The game combines nostalgic Pokémon-style gameplay with blockchain technology to create a unique gaming experience.
 
-## Using this example
+![PokéVille Game Demo](https://placeholder-image-url.com/pokeville-demo.png)
 
-Run the following command:
+## 🎮 Game Features
 
-```sh
-npx create-turbo@latest
-```
+- **Multiplayer Exploration**: Navigate a 2D tile-based world with real-time player interactions
+- **Pokémon Encounters**: Find and interact with Pokémon throughout the game world
+- **Catching Mechanics**: Use different types of Pokéballs (Standard, Great, Ultra) with varying catch rates
+- **Token Economy**: Earn PokéCoins on successful catches based on Pokémon rarity and difficulty
+- **In-game Inventory**: Manage your Pokéballs and other items through a reactive inventory system
 
-## What's inside?
+## 💻 Technical Overview
 
-This Turborepo includes the following packages/apps:
+PokéVille is built as a full-stack application with several interconnected components:
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+### Architecture
 
 ```
-cd my-turborepo
-pnpm build
+├── apps/
+│   ├── frontend-world/     # React-based frontend application
+│   ├── http-server/        # Express REST API server
+│   └── ws-server/          # WebSocket server for real-time multiplayer
+└── packages/
+    └── db/                 # Shared database models and Prisma schema
 ```
 
-### Develop
+### Technology Stack
 
-To develop all apps and packages, run the following command:
+- **Frontend**: React, Phaser.js for game rendering
+- **Backend**: Express.js, WebSockets (ws)
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: JWT-based auth system
+- **Blockchain**: Solana Web3.js, SPL Token for in-game economy
 
-```
-cd my-turborepo
-pnpm dev
-```
+## 🚀 Key Components
 
-### Remote Caching
+### Game Engine (Phaser.js)
+The core gameplay is powered by Phaser.js, providing:
+- Tile-based map navigation
+- Character animations and movement
+- Collision detection
+- Pokémon encounters and interaction logic
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+### WebSocket Server
+Real-time multiplayer functionality including:
+- Player position synchronization
+- Multiple player rendering
+- Room-based gameplay
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+### Blockchain Integration
+Solana blockchain integration for:
+- Token-based economy using SPL Tokens
+- PokéCoin rewards for successful catches
+- In-game item purchases (Pokéballs)
+- Airdrops for new players
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+### Authentication System
+Secure user management with:
+- Username/password authentication
+- JWT token generation and validation
+- Protected routes for authenticated actions
 
-```
-cd my-turborepo
-npx turbo login
-```
+## 🔧 Game Mechanics
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### Pokémon Encounter System
+Pokémon have various attributes affecting gameplay:
+- **Type**: The Pokémon species (e.g., Solgaleo)
+- **Bounty**: Base reward value
+- **Multiplier**: Reward multiplier based on rarity
+- **Difficulty**: Catch difficulty rating
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+### Pokéball System
+Three tiers of Pokéballs with different catch rates:
+- **Standard Pokéball**: Basic catch rate
+- **Great Ball**: Improved catch rate
+- **Ultra Ball**: Highest catch rate
 
-```
-npx turbo link
-```
+### Catching Algorithm
+The catching system uses a probability-based algorithm:
+- Calculate catch chance based on Pokéball type and Pokémon difficulty
+- Success rewards player with PokéCoins (Bounty × Multiplier)
+- Failure consumes the Pokéball without reward
 
-## Useful Links
+## 🔄 Data Flow
 
-Learn more about the power of Turborepo:
+1. User authenticates via the REST API
+2. Frontend connects to WebSocket server for real-time updates
+3. Game scene loads with Phaser.js rendering the world
+4. Player movement sends updates through WebSockets to other players
+5. Pokémon encounters trigger the catch interface
+6. Successful catches initiate blockchain transactions for rewards
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+## 🛠️ Setup and Installation
+
+### Prerequisites
+- Node.js (v14+)
+- pnpm package manager
+- PostgreSQL database
+- Solana CLI tools (for local testing)
+
+### Installation Steps
+1. Clone the repository
+   ```bash
+   git clone https://github.com/yourusername/pokeville.git
+   cd pokeville
+   ```
+
+2. Install dependencies
+   ```bash
+   pnpm install
+   ```
+
+3. Set up environment variables
+   ```bash
+   cp .env.example .env
+   # Configure your database and Solana wallet settings
+   ```
+
+4. Push database schema
+   ```bash
+   cd packages/db
+   npx prisma db push
+   ```
+
+5. Build the applications
+   ```bash
+   pnpm run build
+   ```
+
+6. Start the servers
+   ```bash
+   pnpm run start
+   ```
+
+## 🌐 Deployment
+
+The application is deployed at [futoisland.com](https://futoisland.com) and consists of:
+
+- Frontend static assets served via a CDN
+- WebSocket server for real-time gameplay
+- HTTP REST API for authentication and transactions
+- Solana devnet integration for blockchain features
+
+## 🔒 Security Considerations
+
+- JWT tokens for secure authentication
+- Server-side validation of all blockchain transactions
+- Rate limiting on Solana-related endpoints
+- Validation of all user inputs using Zod schemas
+
+## 🔮 Future Plans
+
+- Additional Pokémon types with unique abilities
+- PVP battle system between players
+- Marketplace for trading caught Pokémon as NFTs
+- Expanded world map with different regions
+- Integration with Solana mainnet
+
+---
+
+## 🌟 Credits
+
+Developed by FutoBandit - An homage to Pokémon Emerald and a celebration of childhood nostalgia through modern web and blockchain technology.
+
+*This project is not affiliated with Nintendo or The Pokémon Company and is created for educational purposes only.*
