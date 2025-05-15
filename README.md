@@ -3,6 +3,7 @@
 PokéVille is a multiplayer Pokémon-inspired web application where players can explore a 2D world, encounter and catch rare Pokémon using different types of Pokéballs, and earn rewards on the Solana blockchain. The game combines nostalgic Pokémon-style gameplay with blockchain technology to create a unique gaming experience.
 
 Live Application Link: https://futoisland.com/
+
 Tutorial Link (Reccomended to watch first) : https://x.com/BanditFuto/status/1921809566787948933
 
 ## 🎮 Game Features
